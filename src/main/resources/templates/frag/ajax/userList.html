@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"> <!-- Einbindung der CSS-Datei-->
+</head>
+<body>
+<div th:fragment="person-container (persons)" class="container"> <!-- Container, der alle Personen beinhaltet, die dargestellt werden sollen-->
+    <div class="tile" th:each="person : ${persons}">  <!-- Für jede Person in der Liste "persons" soll dieses Element wiederholt werden inklusive der eingeschlossenen Elemente-->
+        <img th:src="'/images/' + ${person.profilePictureURI}" >
+        <span th:text="${person.name}" th:style="${person.alter == null} ? 'margin-bottom:10px;'"></span>
+        <span th:text="${person.alter != null} ? ${person.alter} + ' Jahre alt': ''"></span>
+    </div>
+</div>
+</body>

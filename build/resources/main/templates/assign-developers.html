@@ -1,0 +1,14 @@
+<h2>Assign Developers</h2>
+
+<form method="post">
+    <div th:each="dev : ${developers}">
+        <label>
+            <input type="checkbox"
+                   name="developers"
+                   th:value="${dev.id}">
+            <span th:text="${dev.name}"></span>
+        </label>
+    </div>
+
+    <button type="submit">Assign</button>
+</form>

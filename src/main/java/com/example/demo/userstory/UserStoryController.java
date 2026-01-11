@@ -1,0 +1,72 @@
+package com.example.demo.userstory;
+
+import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.user.UserService;
+import java.util.List;
+
+@Controller
+@RequestMapping("/stories")
+public class UserStoryController {
+
+    private final UserStoryService service;
+    private final UserService userService;
+
+
+    public UserStoryController(
+            UserStoryService service,
+            UserService userService
+    ) {
+        this.service = service;
+        this.userService = userService;
+    }
+
+
+    @GetMapping("/backlog")
+    public String backlog(Model model) {
+        model.addAttribute("stories", service.backlog());
+        return "backlog";
+    }
+
+    @PreAuthorize("hasRole('PO')")
+    @GetMapping("/new")
+    public String createForm(Model model) {
+        model.addAttribute("story", new UserStory());
+        return "story-form";
+    }
+
+    @PreAuthorize("hasRole('PO')")
+    @PostMapping("/new")
+    public String create(
+            @Valid @ModelAttribute("story") UserStory story,
+            BindingResult result
+    ) {
+        if (result.hasErrors()) {
+            return "story-form";
+        }
+        service.create(story);
+        return "redirect:/stories/backlog";
+    }
+
+    @PreAuthorize("hasRole('PO')")
+    @GetMapping("/{id}/assign")
+    public String assignForm(@PathVariable Long id, Model model) {
+        model.addAttribute("story", service.findById(id));
+        model.addAttribute("developers", userService.findDevelopers());
+        return "assign-developers";
+    }
+    @PreAuthorize("hasRole('PO')")
+    @PostMapping("/{id}/assign")
+    public String assign(
+            @PathVariable Long id,
+            @RequestParam List<Long> developers
+    ) {
+        service.assignDevelopers(id, developers);
+        return "redirect:/po/dashboard";
+    }
+}

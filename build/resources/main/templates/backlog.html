@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Backlog</title>
+</head>
+<body>
+
+<h1>Backlog</h1>
+
+<a href="/stories/new">Create new story</a>
+
+<ul>
+    <li th:each="story : ${stories}">
+        <b th:text="${story.title}">Title</b>
+        (priority: <span th:text="${story.priority}"></span>)
+        
+        <form th:action="@{/stories/{id}/sprint(id=${story.id})}" method="post">
+            <button type="submit">Move to Sprint</button>
+        </form>
+    </li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<h1>PO Dashboard</h1>
+
+<h2>Backlog</h2>
+<ul>
+    <li th:each="s : ${backlog}">
+        <b th:text="${s.title}"></b>
+
+        <!-- Assign developers -->
+        <a th:href="@{/stories/{id}/assign(id=${s.id})}">
+            Assign developers
+        </a>
+
+        <!-- Move to Sprint -->
+        <form th:action="@{/stories/{id}/sprint(id=${s.id})}"
+              method="post"
+              style="display:inline">
+            <button type="submit">Move to Sprint</button>
+        </form>
+    </li>
+</ul>
+
+<h2>Sprint</h2>
+<ul>
+    <li th:each="s : ${sprint}">
+        <span th:text="${s.title}"></span>
+    </li>
+</ul>
+
+</body>
+</html>

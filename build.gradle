@@ -1,0 +1,51 @@
+plugins {
+	id 'java'
+	id 'war'
+	id 'org.springframework.boot' version '3.1.6-SNAPSHOT'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '21'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+//Orte von denen die Dependencies aus dem Internet heruntergeladen werden.
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // Spring Implementation der Java Persistence API für die Anbindung einer Datenbank
+	implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security, für einen Login, um die Anwendung zu sichern
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Thymeleaf für HTML-Templates
+	implementation 'org.springframework.boot:spring-boot-starter-web' // Spring Boot als Webframework
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6' // Thymeleaf <-> Spring Security
+	compileOnly 'org.projectlombok:lombok' // Lombok für schlankere Models (Getter/Setter/Equals/Builder/...)
+//	developmentOnly 'org.springframework.boot:spring-boot-docker-compose' // docker compose Unterstützung
+//	runtimeOnly 'org.postgresql:postgresql' // MariaDB-Treiber
+	implementation 'com.h2database:h2' //H2 Datenbank für die Entwicklung (Datenbank muss nicht extern laufen)
+	annotationProcessor 'org.projectlombok:lombok' //Lombok Annotationen
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat' // Built-In Tomcat um Spring-Anwendung ohne laufenden separaten Webserver ausführen zu können
+	testImplementation 'org.springframework.boot:spring-boot-starter-test' // Unterstützung für Tests
+//	testImplementation 'org.springframework.security:spring-security-test' // Unterstützung für Tests mit Spring Security
+}
+
+tasks.named('bootBuildImage') {
+	builder = 'paketobuildpacks/builder-jammy-base:latest'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
