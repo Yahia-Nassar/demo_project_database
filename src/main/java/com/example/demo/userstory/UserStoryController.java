@@ -28,8 +28,12 @@ public class UserStoryController {
 
 
     @GetMapping("/backlog")
-    public String backlog(Model model) {
-        model.addAttribute("stories", service.backlog());
+    public String backlog(
+            @RequestParam(name = "sort", required = false) String sort,
+            Model model
+    ) {
+        model.addAttribute("stories", service.backlog(sort));
+        model.addAttribute("sort", sort);
         return "backlog";
     }
 
@@ -52,6 +56,35 @@ public class UserStoryController {
         service.create(story);
         return "redirect:/stories/backlog";
     }
+
+    @PreAuthorize("hasRole('PO')")
+    @PostMapping("/{id}/sprint")
+    public String moveToSprint(@PathVariable Long id) {
+        service.moveToSprint(id);
+        return "redirect:/stories/backlog";
+    }
+
+    @PreAuthorize("hasRole('PO')")
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        model.addAttribute("story", service.findById(id));
+        return "story-edit";
+    }
+
+    @PreAuthorize("hasRole('PO')")
+    @PostMapping("/{id}/edit")
+    public String edit(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("story") UserStory story,
+            BindingResult result
+    ) {
+        if (result.hasErrors()) {
+            return "story-edit";
+        }
+        service.update(id, story);
+        return "redirect:/stories/backlog";
+    }
+
 
     @PreAuthorize("hasRole('PO')")
     @GetMapping("/{id}/assign")

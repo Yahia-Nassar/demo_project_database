@@ -1,0 +1,52 @@
+package com.example.demo.controller;
+
+import com.example.demo.task.Task;
+import com.example.demo.task.TaskService;
+import com.example.demo.task.TaskStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Controller
+@RequestMapping("/board")
+public class SprintBoardController {
+
+    private final TaskService taskService;
+
+    public SprintBoardController(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
+    @GetMapping("/sprint")
+    public String sprintBoard(Model model) {
+        List<Task> tasks = taskService.sprintTasks();
+
+        Map<TaskStatus, List<Task>> columns = new LinkedHashMap<>();
+        for (TaskStatus status : TaskStatus.values()) {
+            columns.put(status, tasks.stream()
+                    .filter(task -> status.equals(normalizeStatus(task.getStatus())))
+                    .collect(Collectors.toList()));
+        }
+
+        Map<Long, List<TaskStatus>> transitions = tasks.stream()
+                .collect(Collectors.toMap(
+                        Task::getId,
+                        task -> taskService.allowedTransitions(task.getStatus()).stream().toList()
+                ));
+
+        model.addAttribute("columns", columns);
+        model.addAttribute("transitions", transitions);
+        model.addAttribute("returnUrl", "/board/sprint");
+        return "sprint-board";
+    }
+
+    private TaskStatus normalizeStatus(TaskStatus status) {
+        return status == null ? TaskStatus.TODO : status;
+    }
+}

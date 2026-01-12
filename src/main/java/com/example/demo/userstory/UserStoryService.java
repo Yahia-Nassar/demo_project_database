@@ -47,12 +47,30 @@ public class UserStoryService {
         return repo.findByStatus(UserStoryStatus.BACKLOG);
     }
 
+    public List<UserStory> backlog(String sort) {
+        if ("priority_asc".equalsIgnoreCase(sort)) {
+            return repo.findByStatusOrderByPriorityAsc(UserStoryStatus.BACKLOG);
+        }
+        if ("priority_desc".equalsIgnoreCase(sort)) {
+            return repo.findByStatusOrderByPriorityDesc(UserStoryStatus.BACKLOG);
+        }
+        return repo.findByStatus(UserStoryStatus.BACKLOG);
+    }
+
     public List<UserStory> sprint() {
         return repo.findByStatus(UserStoryStatus.SPRINT);
     }
 
     public UserStory findById(Long id) {
     return repo.findById(id).orElseThrow();
+    }
+
+    public UserStory update(Long id, UserStory updated) {
+        UserStory story = repo.findById(id).orElseThrow();
+        story.setTitle(updated.getTitle());
+        story.setDescription(updated.getDescription());
+        story.setPriority(updated.getPriority());
+        return repo.save(story);
     }
 
     public List<UserStory> storiesForDeveloper(Long userId) {

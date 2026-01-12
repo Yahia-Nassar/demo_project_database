@@ -32,4 +32,15 @@ public class TaskController {
         service.markDone(id);
         return "redirect:/dev/dashboard";
     }
+
+    @PreAuthorize("hasRole('PO') or hasRole('DEVELOPER')")
+    @PostMapping("/{id}/status")
+    public String updateStatus(
+            @PathVariable Long id,
+            @RequestParam TaskStatus status,
+            @RequestParam(defaultValue = "/board/sprint") String returnUrl
+    ) {
+        service.changeStatus(id, status);
+        return "redirect:" + returnUrl;
+    }
 }

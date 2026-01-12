@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<h1>Sprint Board</h1>
+
+<div style="display:flex; gap:16px; align-items:flex-start;">
+    <div th:each="entry : ${columns}" style="border:1px solid #ccc; padding:12px; min-width:180px;">
+        <h2 th:text="${entry.key}">Status</h2>
+
+        <div th:each="task : ${entry.value}" style="border:1px solid #eee; padding:8px; margin-bottom:8px;">
+            <div>
+                <strong th:text="${task.title}">Task title</strong>
+            </div>
+            <div>
+                <span th:text="${task.story.title}">Story title</span>
+            </div>
+            <div th:if="${task.assignedTo != null}">
+                <small th:text="'Assigned: ' + ${task.assignedTo.email}"></small>
+            </div>
+
+            <div>
+                <form th:each="nextStatus : ${transitions[task.id]}"
+                      th:action="@{/tasks/{id}/status(id=${task.id})}"
+                      method="post"
+                      style="display:inline-block; margin-right:4px;">
+                    <input type="hidden" name="status" th:value="${nextStatus}"/>
+                    <input type="hidden" name="returnUrl" th:value="${returnUrl}"/>
+                    <button type="submit"
+                            th:text="${task.status.name() == 'DONE' and nextStatus.name() == 'IN_PROGRESS'} ? 'Mark Incomplete' : 'Move to ' + nextStatus">
+                        Move
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="/po/dashboard">Back to PO Dashboard</a>
+
+</body>
+</html>

@@ -6,6 +6,7 @@ import java.util.List;
 public interface UserStoryRepository extends JpaRepository<UserStory, Long> {
 
     List<UserStory> findByStatus(UserStoryStatus status);
-
+    List<UserStory> findByStatusOrderByPriorityAsc(UserStoryStatus status);
+    List<UserStory> findByStatusOrderByPriorityDesc(UserStoryStatus status);
     List<UserStory> findByDevelopers_Id(Long developerId);
 }

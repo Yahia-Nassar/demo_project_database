@@ -4,11 +4,14 @@
 
 <h1>PO Dashboard</h1>
 
+<a href="/board/sprint">View Sprint Board</a>
+
 <h2>Backlog</h2>
 <ul>
     <li th:each="s : ${backlog}">
 
         <b th:text="${s.title}"></b>
+        <a th:href="@{/stories/{id}/edit(id=${s.id})}">Edit</a>
 
         <!-- Assign developers -->
         <a th:href="@{/stories/{id}/assign(id=${s.id})}">

@@ -9,10 +9,19 @@
 
 <a href="/stories/new">Create new story</a>
 
+<div>
+    <span>Sort by priority:</span>
+    <a th:href="@{/stories/backlog(sort='priority_desc')}">High → Low</a>
+    <a th:href="@{/stories/backlog(sort='priority_asc')}">Low → High</a>
+    <a th:href="@{/stories/backlog}">Default</a>
+</div>
+
 <ul>
     <li th:each="story : ${stories}">
         <b th:text="${story.title}">Title</b>
         (priority: <span th:text="${story.priority}"></span>)
+
+        <a th:href="@{/stories/{id}/edit(id=${story.id})}">Edit</a>
         
         <form   th:if="${#authorization.expression('hasRole(''PO'')')}"
                 th:action="@{/stories/{id}/sprint(id=${story.id})}" 
