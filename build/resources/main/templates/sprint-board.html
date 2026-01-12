@@ -27,7 +27,7 @@
                     <input type="hidden" name="status" th:value="${nextStatus}"/>
                     <input type="hidden" name="returnUrl" th:value="${returnUrl}"/>
                     <button type="submit"
-                            th:text="${task.status.name() == 'DONE' and nextStatus.name() == 'IN_PROGRESS'} ? 'Mark Incomplete' : 'Move to ' + nextStatus">
+                            th:text="${normalizedStatuses[task.id].name() == 'DONE' and nextStatus.name() == 'IN_PROGRESS'} ? 'Mark Incomplete' : 'Move to ' + nextStatus">
                         Move
                     </button>
                 </form>

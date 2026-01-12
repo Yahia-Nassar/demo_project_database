@@ -5,6 +5,7 @@ import com.example.demo.task.TaskService;
 import com.example.demo.task.TaskStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/board")
+@PreAuthorize("hasRole('PO') or hasRole('DEVELOPER')")
 public class SprintBoardController {
 
     private final TaskService taskService;
@@ -27,6 +29,9 @@ public class SprintBoardController {
     public String sprintBoard(Model model) {
         List<Task> tasks = taskService.sprintTasks();
 
+        Map<Long, TaskStatus> normalizedStatuses = tasks.stream()
+                .collect(Collectors.toMap(Task::getId, task -> normalizeStatus(task.getStatus())));
+
         Map<TaskStatus, List<Task>> columns = new LinkedHashMap<>();
         for (TaskStatus status : TaskStatus.values()) {
             columns.put(status, tasks.stream()
@@ -37,11 +42,14 @@ public class SprintBoardController {
         Map<Long, List<TaskStatus>> transitions = tasks.stream()
                 .collect(Collectors.toMap(
                         Task::getId,
-                        task -> taskService.allowedTransitions(task.getStatus()).stream().toList()
+                        task -> taskService.allowedTransitions(normalizeStatus(task.getStatus()))
+                                .stream()
+                                .toList()
                 ));
 
         model.addAttribute("columns", columns);
         model.addAttribute("transitions", transitions);
+        model.addAttribute("normalizedStatuses", normalizedStatuses);
         model.addAttribute("returnUrl", "/board/sprint");
         return "sprint-board";
     }
