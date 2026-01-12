@@ -62,4 +62,12 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public com.example.demo.person.Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(com.example.demo.person.Person person) {
+        this.person = person;
+    }
 }

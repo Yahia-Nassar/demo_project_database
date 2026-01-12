@@ -8,7 +8,7 @@ import com.example.demo.userstory.UserStoryStatus;
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByStoryId(Long storyId);
-    List<Task> findByAssignedToId(Long userId);
-    List<Task> findByAssignedTo(User user);
+    List<Task> findByAssignees_Id(Long userId);
+    List<Task> findByAssignees(User user);
     List<Task> findByStory_Status(UserStoryStatus status);
 }

@@ -40,10 +40,30 @@ public class TaskService {
     }
 
     public void assign(Long taskId, Long userId) {
+        assign(taskId, List.of(userId));
+    }
+
+    public void assign(Long taskId, List<Long> userIds) {
         Task task = taskRepo.findById(taskId).orElseThrow();
-        User user = userRepo.findById(userId).orElseThrow();
-        task.setAssignedTo(user);
+        List<User> users = userRepo.findAllById(userIds);
+        task.getAssignees().clear();
+        task.getAssignees().addAll(users);
         taskRepo.save(task);
+    }
+
+    public Task findById(Long taskId) {
+        return taskRepo.findById(taskId).orElseThrow();
+    }
+
+    public Task update(Long taskId, String title, List<Long> assigneeIds) {
+        Task task = taskRepo.findById(taskId).orElseThrow();
+        task.setTitle(title);
+        if (assigneeIds != null) {
+            List<User> users = userRepo.findAllById(assigneeIds);
+            task.getAssignees().clear();
+            task.getAssignees().addAll(users);
+        }
+        return taskRepo.save(task);
     }
 
     public void markDone(Long taskId) {
@@ -82,11 +102,11 @@ public class TaskService {
     }
 
     public List<Task> forUser(Long userId) {
-        return taskRepo.findByAssignedToId(userId);
+        return taskRepo.findByAssignees_Id(userId);
     }
 
     public List<Task> findByDeveloper(User developer) {
-        return taskRepo.findByAssignedTo(developer);
+        return taskRepo.findByAssignees(developer);
     }
 
     public List<Task> sprintTasks() {

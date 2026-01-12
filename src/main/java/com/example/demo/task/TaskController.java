@@ -2,16 +2,24 @@ package com.example.demo.task;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.user.UserService;
+
+import java.util.List;
+
 
 @Controller
 @RequestMapping("/tasks")
 public class TaskController {
 
     private final TaskService service;
+    private final UserService userService;
 
-    public TaskController(TaskService service) {
+     public TaskController(TaskService service, UserService userService) {
         this.service = service;
+        this.userService = userService;
     }
 
     
@@ -31,6 +39,36 @@ public class TaskController {
     public String done(@PathVariable Long id) {
         service.markDone(id);
         return "redirect:/dev/dashboard";
+    }
+
+    @PreAuthorize("hasRole('PO') or hasRole('DEVELOPER')")
+    @PostMapping("/{id}/assign")
+    public String assign(
+            @PathVariable Long id,
+            @RequestParam(name = "assignees", required = false) List<Long> assignees,
+            @RequestParam(defaultValue = "/board/sprint") String returnUrl
+    ) {
+        service.assign(id, assignees == null ? List.of() : assignees);
+        return "redirect:" + returnUrl;
+    }
+
+    @PreAuthorize("hasRole('PO') or hasRole('DEVELOPER')")
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        model.addAttribute("task", service.findById(id));
+        model.addAttribute("developers", userService.findDevelopers());
+        return "task-edit";
+    }
+
+    @PreAuthorize("hasRole('PO') or hasRole('DEVELOPER')")
+    @PostMapping("/{id}/edit")
+    public String edit(
+            @PathVariable Long id,
+            @RequestParam String title,
+            @RequestParam(name = "assignees", required = false) List<Long> assignees
+    ) {
+        service.update(id, title, assignees == null ? List.of() : assignees);
+        return "redirect:/board/sprint";
     }
 
     @PreAuthorize("hasRole('PO') or hasRole('DEVELOPER')")

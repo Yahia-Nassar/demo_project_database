@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.task.Task;
 import com.example.demo.task.TaskService;
 import com.example.demo.task.TaskStatus;
+import com.example.demo.user.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,9 +21,11 @@ import java.util.stream.Collectors;
 public class SprintBoardController {
 
     private final TaskService taskService;
+    private final UserService userService;
 
-    public SprintBoardController(TaskService taskService) {
+    public SprintBoardController(TaskService taskService, UserService userService) {
         this.taskService = taskService;
+        this.userService = userService;
     }
 
     @GetMapping("/sprint")
@@ -50,6 +53,7 @@ public class SprintBoardController {
         model.addAttribute("columns", columns);
         model.addAttribute("transitions", transitions);
         model.addAttribute("normalizedStatuses", normalizedStatuses);
+        model.addAttribute("developers", userService.findDevelopers());
         model.addAttribute("returnUrl", "/board/sprint");
         return "sprint-board";
     }

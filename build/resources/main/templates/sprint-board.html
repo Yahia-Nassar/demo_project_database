@@ -15,8 +15,34 @@
             <div>
                 <span th:text="${task.story.title}">Story title</span>
             </div>
-            <div th:if="${task.assignedTo != null}">
-                <small th:text="'Assigned: ' + ${task.assignedTo.email}"></small>
+            <div th:if="${!task.assignees.isEmpty()}">
+                <small>Assigned:</small>
+                <span th:each="assignee, iter : ${task.assignees}">
+                    <span th:text="${assignee.email}"></span><span th:if="${!iter.last}">, </span>
+                </span>
+            </div>
+
+            <div>
+                <form th:action="@{/tasks/{id}/assign(id=${task.id})}"
+                      method="post"
+                      style="margin-top:6px;">
+                    <input type="hidden" name="returnUrl" th:value="${returnUrl}"/>
+                    <label>
+                        Assignees
+                        <select name="assignees" multiple size="3">
+                            <option th:each="dev : ${developers}"
+                                    th:value="${dev.id}"
+                                    th:text="${dev.email}"
+                                    th:selected="${task.assignees.contains(dev)}">
+                            </option>
+                        </select>
+                    </label>
+                    <button type="submit">Save</button>
+                </form>
+            </div>
+
+            <div>
+                <a th:href="@{/tasks/{id}/edit(id=${task.id})}">Edit</a>
             </div>
 
             <div>

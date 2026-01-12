@@ -4,6 +4,9 @@ import com.example.demo.user.User;
 import com.example.demo.userstory.UserStory;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 public class Task {
 
@@ -19,8 +22,13 @@ public class Task {
     @ManyToOne(optional = false)
     private UserStory story;
 
-    @ManyToOne
-    private User assignedTo;
+    @ManyToMany
+    @JoinTable(
+            name = "task_assignees",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> assignees = new HashSet<>();
 
     // ===== GETTERS & SETTERS =====
 
@@ -56,11 +64,11 @@ public class Task {
         this.story = story;
     }
 
-    public User getAssignedTo() {
-        return assignedTo;
+    public Set<User> getAssignees() {
+        return assignees;
     }
 
-    public void setAssignedTo(User assignedTo) {
-        this.assignedTo = assignedTo;
+    public void setAssignees(Set<User> assignees) {
+        this.assignees = assignees;
     }
 }

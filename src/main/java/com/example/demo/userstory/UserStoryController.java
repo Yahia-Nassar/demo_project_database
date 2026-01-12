@@ -85,7 +85,6 @@ public class UserStoryController {
         return "redirect:/stories/backlog";
     }
 
-
     @PreAuthorize("hasRole('PO')")
     @GetMapping("/{id}/assign")
     public String assignForm(@PathVariable Long id, Model model) {
