@@ -33,8 +33,17 @@ public class DeveloperDashboardController {
         User current = userService.currentUser();
         model.addAttribute("stories",
                 storyService.storiesForDeveloper(current.getId()));
-        model.addAttribute("tasks", taskService.forUser(current.getId()));
         return "dev-dashboard";
     }
     
+    @GetMapping("/dev/tasks")
+    public String myTasks(Model model) {
+
+        User dev = userService.currentUser();
+        model.addAttribute("tasks", taskService.findByDeveloper(dev));
+
+        return "dev-tasks";
+}
+
+
 }

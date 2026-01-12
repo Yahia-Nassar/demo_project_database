@@ -56,4 +56,8 @@ public class TaskService {
     public List<Task> forUser(Long userId) {
         return taskRepo.findByAssignedToId(userId);
     }
+
+    public List<Task> findByDeveloper(User developer) {
+        return taskRepo.findByAssignedTo(developer);
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.userstory;
 
 import com.example.demo.user.User;
+import com.example.demo.task.Task;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,14 +24,25 @@ public class UserStory {
     @Enumerated(EnumType.STRING)
     private UserStoryStatus status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "userstory_developers",
         joinColumns = @JoinColumn(name = "story_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> developers = new HashSet<>();
+    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Task> tasks = new HashSet<>();
+
 // getters & setters
+
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
+    }
 
     public Set<User> getDevelopers() {
         return developers;
