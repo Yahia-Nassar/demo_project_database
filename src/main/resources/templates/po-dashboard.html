@@ -21,14 +21,29 @@
             <button type="submit">Move to Sprint</button>
         </form>
     </li>
+    <li th:each="dev : ${s.developers}">
+        <span th:text="${dev.email}"></span>
+        <form th:action="@{/stories/{sid}/remove-dev/{uid}(sid=${s.id},uid=${dev.id})}"
+            method="post"
+            style="display:inline">
+            <button>Remove</button>
+        </form>
+    </li>
+
 </ul>
 
 <h2>Sprint</h2>
-<ul>
-    <li th:each="s : ${sprint}">
-        <span th:text="${s.title}"></span>
-    </li>
+<ul th:each="s : ${sprint}">
+    <li th:text="${s.title}"></li>
+
+    <ul>
+        <li th:each="t : ${s.tasks}">
+            <span th:text="${t.title}"></span>
+            (<span th:text="${t.status}"></span>)
+        </li>
+    </ul>
 </ul>
+
 
 </body>
 </html>

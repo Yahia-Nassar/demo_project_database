@@ -14,7 +14,9 @@
         <b th:text="${story.title}">Title</b>
         (priority: <span th:text="${story.priority}"></span>)
         
-        <form th:action="@{/stories/{id}/sprint(id=${story.id})}" method="post">
+        <form   th:if="${#authorization.expression('hasRole(''PO'')')}"
+                th:action="@{/stories/{id}/sprint(id=${story.id})}" 
+                method="post">
             <button type="submit">Move to Sprint</button>
         </form>
     </li>

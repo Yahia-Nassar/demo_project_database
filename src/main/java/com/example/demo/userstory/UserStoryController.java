@@ -64,9 +64,21 @@ public class UserStoryController {
     @PostMapping("/{id}/assign")
     public String assign(
             @PathVariable Long id,
-            @RequestParam List<Long> developers
+            @RequestParam(name = "developers", required = false) List<Long> developers
     ) {
-        service.assignDevelopers(id, developers);
+        if (developers != null) {
+            service.assignDevelopers(id, developers);
+        }
+        return "redirect:/po/dashboard";
+    }
+
+    @PreAuthorize("hasRole('PO')")
+    @PostMapping("/{storyId}/remove-dev/{userId}")
+    public String removeDeveloper(
+            @PathVariable Long storyId,
+            @PathVariable Long userId
+    ) {
+        service.removeDeveloper(storyId, userId);
         return "redirect:/po/dashboard";
     }
 }

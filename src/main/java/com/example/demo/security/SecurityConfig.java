@@ -15,6 +15,12 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @Configuration
 public class SecurityConfig {
 
+    private final RoleBasedSuccessHandler roleBasedSuccessHandler;
+
+    public SecurityConfig(RoleBasedSuccessHandler roleBasedSuccessHandler) {
+        this.roleBasedSuccessHandler = roleBasedSuccessHandler;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
@@ -43,10 +49,9 @@ public class SecurityConfig {
 
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/hello", true)
+                .successHandler(roleBasedSuccessHandler)
                 .permitAll()
             )
-
             .logout(logout -> logout
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()

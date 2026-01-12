@@ -1,14 +1,29 @@
-<h2>Assign Developers</h2>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
 
-<form method="post">
-    <div th:each="dev : ${developers}">
-        <label>
-            <input type="checkbox"
-                   name="developers"
-                   th:value="${dev.id}">
-            <span th:text="${dev.name}"></span>
-        </label>
-    </div>
+<h1>Assign developers</h1>
 
-    <button type="submit">Assign</button>
+<h2 th:text="${story.title}"></h2>
+
+<form th:action="@{/stories/{id}/assign(id=${story.id})}" method="post">
+
+    <ul>
+        <li th:each="dev : ${developers}">
+            <label>
+                <input type="checkbox"
+                       name="developers"
+                       th:value="${dev.id}"
+                       th:checked="${story.developers.contains(dev)}"/>
+                <span th:text="${dev.email}"></span>
+            </label>
+        </li>
+    </ul>
+
+    <button type="submit">Save</button>
 </form>
+
+<a href="/po/dashboard">Back</a>
+
+</body>
+</html>

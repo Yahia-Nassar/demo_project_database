@@ -17,6 +17,13 @@ public class UserStoryService {
         this.userRepo = userRepo;
     }
 
+    public void removeDeveloper(Long storyId, Long userId) {
+    UserStory story = repo.findById(storyId).orElseThrow();
+    story.getDevelopers().removeIf(u -> u.getId().equals(userId));
+    repo.save(story);
+}
+
+
     public UserStory create(UserStory story) {
         story.setStatus(UserStoryStatus.BACKLOG);
         return repo.save(story);
@@ -31,6 +38,7 @@ public class UserStoryService {
     public void assignDevelopers(Long storyId, List<Long> userIds) {
     UserStory story = repo.findById(storyId).orElseThrow();
     List<User> devs = userRepo.findAllById(userIds);
+    story.getDevelopers().clear();
     story.getDevelopers().addAll(devs);
     repo.save(story);
     }
@@ -45,6 +53,10 @@ public class UserStoryService {
 
     public UserStory findById(Long id) {
     return repo.findById(id).orElseThrow();
+    }
+
+    public List<UserStory> storiesForDeveloper(Long userId) {
+        return repo.findByDevelopers_Id(userId);
     }
 
 }
