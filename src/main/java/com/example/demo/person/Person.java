@@ -37,4 +37,59 @@ public class Person {
     @OneToOne
     private User user;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getAlter() {
+        return alter;
+    }
+
+    public void setAlter(Integer alter) {
+        this.alter = alter;
+    }
+
+    public Date getGeburtsdatum() {
+        return geburtsdatum;
+    }
+
+    public void setGeburtsdatum(Date geburtsdatum) {
+        this.geburtsdatum = geburtsdatum;
+    }
+
+    public String getGeburtsort() {
+        return geburtsort;
+    }
+
+    public void setGeburtsort(String geburtsort) {
+        this.geburtsort = geburtsort;
+    }
+
+    public String getProfilePictureURI() {
+        return profilePictureURI;
+    }
+
+    public void setProfilePictureURI(String profilePictureURI) {
+        this.profilePictureURI = profilePictureURI;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
