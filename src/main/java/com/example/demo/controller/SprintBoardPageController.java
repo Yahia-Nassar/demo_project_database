@@ -21,12 +21,12 @@ import java.nio.charset.StandardCharsets;
 @Controller
 @RequestMapping("/board")
 @PreAuthorize("hasRole('PO') or hasRole('DEVELOPER')")
-public class SprintBoardController {
+public class SprintBoardPageController {
 
     private final TaskService taskService;
     private final UserService userService;
 
-    public SprintBoardController(TaskService taskService, UserService userService) {
+    public SprintBoardPageController(TaskService taskService, UserService userService) {
         this.taskService = taskService;
         this.userService = userService;
     }

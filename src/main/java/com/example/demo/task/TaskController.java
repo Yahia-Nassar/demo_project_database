@@ -4,6 +4,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.dao.OptimisticLockingFailureException;
 
 import com.example.demo.user.UserService;
 
@@ -47,8 +48,13 @@ public class TaskController {
             @RequestParam(name = "assignees", required = false) List<Long> assignees,
             @RequestParam(defaultValue = "/board/sprint") String returnUrl
     ) {
-        service.assign(id, assignees == null ? List.of() : assignees);
-        return "redirect:" + returnUrl;
+        try {
+            service.assign(id, assignees == null ? List.of() : assignees);
+            return "redirect:" + returnUrl;
+        } catch (OptimisticLockingFailureException ex) {
+            return "redirect:" + returnUrl + (returnUrl.contains("?") ? "&" : "?")
+                    + "error=conflict";
+        }
     }
 
     @PreAuthorize("hasRole('PO') or hasRole('DEVELOPER')")
@@ -68,14 +74,18 @@ public class TaskController {
             @RequestParam(required = false) Double estimateHours,
             @RequestParam(required = false) Double actualHours
     ) {
-        service.updateDetails(
-                id,
-                title,
-                assignees == null ? List.of() : assignees,
-                estimateHours,
-                actualHours
-        );
-        return "redirect:/board/sprint";
+        try {
+            service.updateDetails(
+                    id,
+                    title,
+                    assignees == null ? List.of() : assignees,
+                    estimateHours,
+                    actualHours
+            );
+            return "redirect:/board/sprint";
+        } catch (OptimisticLockingFailureException ex) {
+            return "redirect:/board/sprint?error=conflict";
+        }
     }
 
     @PreAuthorize("hasRole('PO') or hasRole('DEVELOPER')")
@@ -85,7 +95,12 @@ public class TaskController {
             @RequestParam TaskStatus status,
             @RequestParam(defaultValue = "/board/sprint") String returnUrl
     ) {
-        service.changeStatus(id, status);
-        return "redirect:" + returnUrl;
+        try {
+            service.changeStatus(id, status);
+            return "redirect:" + returnUrl;
+        } catch (OptimisticLockingFailureException ex) {
+            return "redirect:" + returnUrl + (returnUrl.contains("?") ? "&" : "?")
+                    + "error=conflict";
+        }
     }
 }

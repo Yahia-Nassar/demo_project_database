@@ -20,6 +20,9 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 
+    @Version
+    private Long version;
+
     private Double estimateHours;
     private Double actualHours;
     private LocalDateTime completedAt;
@@ -59,6 +62,14 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Double getEstimateHours() {

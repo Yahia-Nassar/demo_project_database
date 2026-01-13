@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.dao.OptimisticLockingFailureException;
 
 import com.example.demo.user.UserService;
 import java.util.List;
@@ -55,15 +56,23 @@ public class UserStoryController {
         if (result.hasErrors()) {
             return "story-form";
         }
-        service.create(story);
-        return "redirect:/stories/backlog";
+       try {
+            service.create(story);
+            return "redirect:/stories/backlog";
+        } catch (OptimisticLockingFailureException ex) {
+            return "redirect:/stories/backlog?error=conflict";
+        }
     }
 
     @PreAuthorize("hasRole('PO')")
     @PostMapping("/{id}/sprint")
     public String moveToSprint(@PathVariable Long id) {
-        service.moveToSprint(id);
-        return "redirect:/stories/backlog";
+        try {
+            service.moveToSprint(id);
+            return "redirect:/stories/backlog";
+        } catch (OptimisticLockingFailureException ex) {
+            return "redirect:/stories/backlog?error=conflict";
+        }
     }
 
     @PreAuthorize("hasRole('PO')")
@@ -83,8 +92,12 @@ public class UserStoryController {
         if (result.hasErrors()) {
             return "story-edit";
         }
-        service.update(id, story);
-        return "redirect:/stories/backlog";
+        try {
+            service.update(id, story);
+            return "redirect:/stories/backlog";
+        } catch (OptimisticLockingFailureException ex) {
+            return "redirect:/stories/backlog?error=conflict";
+        }
     }
 
     @PreAuthorize("hasRole('PO')")
@@ -100,10 +113,14 @@ public class UserStoryController {
             @PathVariable Long id,
             @RequestParam(name = "developers", required = false) List<Long> developers
     ) {
-        if (developers != null) {
-            service.assignDevelopers(id, developers);
+        try {
+            if (developers != null) {
+                service.assignDevelopers(id, developers);
+            }
+            return "redirect:/po/dashboard";
+        } catch (OptimisticLockingFailureException ex) {
+            return "redirect:/po/dashboard?error=conflict";
         }
-        return "redirect:/po/dashboard";
     }
 
     @PreAuthorize("hasRole('PO')")
@@ -112,7 +129,11 @@ public class UserStoryController {
             @PathVariable Long storyId,
             @PathVariable Long userId
     ) {
-        service.removeDeveloper(storyId, userId);
-        return "redirect:/po/dashboard";
+       try {
+            service.removeDeveloper(storyId, userId);
+            return "redirect:/po/dashboard";
+        } catch (OptimisticLockingFailureException ex) {
+            return "redirect:/po/dashboard?error=conflict";
+        }
     }
 }

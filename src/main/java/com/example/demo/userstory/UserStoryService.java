@@ -3,6 +3,7 @@ package com.example.demo.userstory;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+import com.example.demo.audit.AuditLogService;
 import com.example.demo.user.User;
 import com.example.demo.user.UserRepository;
 
@@ -11,10 +12,12 @@ import com.example.demo.user.UserRepository;
 public class UserStoryService {
     private final UserStoryRepository repo;
     private final UserRepository userRepo;
+    private final AuditLogService auditLogService;
     
-    public UserStoryService(UserStoryRepository repo, UserRepository userRepo) {
+    public UserStoryService(UserStoryRepository repo, UserRepository userRepo, AuditLogService auditLogService) {
         this.repo = repo;
         this.userRepo = userRepo;
+        this.auditLogService = auditLogService;
     }
 
     public void removeDeveloper(Long storyId, Long userId) {
@@ -26,13 +29,16 @@ public class UserStoryService {
 
     public UserStory create(UserStory story) {
         story.setStatus(UserStoryStatus.BACKLOG);
-        return repo.save(story);
+        UserStory saved = repo.save(story);
+        auditLogService.record("UserStory", saved.getId(), "CREATED", "User story created");
+        return saved;
     }
 
     public void moveToSprint(Long id) {
         UserStory story = repo.findById(id).orElseThrow();
         story.setStatus(UserStoryStatus.SPRINT);
         repo.save(story);
+        auditLogService.record("UserStory", story.getId(), "STATUS_CHANGED", "Moved to sprint");
     }
 
     public void assignDevelopers(Long storyId, List<Long> userIds) {
@@ -41,6 +47,7 @@ public class UserStoryService {
         story.getDevelopers().clear();
         story.getDevelopers().addAll(devs);
         repo.save(story);
+        auditLogService.record("UserStory", story.getId(), "ASSIGNED", "Developers assigned");
     }
 
     public List<UserStory> backlog() {
@@ -77,7 +84,9 @@ public class UserStoryService {
         story.setTitle(updated.getTitle());
         story.setDescription(updated.getDescription());
         story.setPriority(updated.getPriority());
-        return repo.save(story);
+        UserStory saved = repo.save(story);
+        auditLogService.record("UserStory", saved.getId(), "UPDATED", "User story updated");
+        return saved;
     }
 
     public List<UserStory> storiesForDeveloper(Long userId) {

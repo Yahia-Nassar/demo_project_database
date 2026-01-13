@@ -1,5 +1,6 @@
 package com.example.demo.task;
 
+import com.example.demo.audit.AuditLogService;
 import com.example.demo.board.BoardEventService;
 import com.example.demo.notification.NotificationService;
 import com.example.demo.notification.NotificationType;
@@ -23,19 +24,22 @@ public class TaskService {
     private final UserRepository userRepo;
     private final NotificationService notificationService;
     private final BoardEventService boardEventService;
+    private final AuditLogService auditLogService;
 
     public TaskService(
             TaskRepository taskRepo,
             UserStoryRepository storyRepo,
             UserRepository userRepo,
             NotificationService notificationService,
-            BoardEventService boardEventService
+            BoardEventService boardEventService,
+            AuditLogService auditLogService
     ) {
         this.taskRepo = taskRepo;
         this.storyRepo = storyRepo;
         this.userRepo = userRepo;
         this.notificationService = notificationService;
         this.boardEventService = boardEventService;
+        this.auditLogService = auditLogService;
     }
 
     public Task create(Long storyId, String title) {
@@ -47,6 +51,7 @@ public class TaskService {
         task.setStory(story);
 
         Task saved = taskRepo.save(task);
+        auditLogService.record("Task", saved.getId(), "CREATED", "Task created");
         boardEventService.broadcastBoardUpdate();
         return saved;
     }
@@ -68,6 +73,7 @@ public class TaskService {
                     NotificationType.TASK_ASSIGNED
             );
         }
+        auditLogService.record("Task", task.getId(), "ASSIGNED", "Task assignees updated");
         boardEventService.broadcastBoardUpdate();
     }
 
@@ -85,6 +91,7 @@ public class TaskService {
         }
         Task saved = taskRepo.save(task);
         boardEventService.broadcastBoardUpdate();
+        auditLogService.record("Task", saved.getId(), "UPDATED", "Task updated");
         return saved;
     }
 
@@ -110,6 +117,7 @@ public class TaskService {
                     NotificationType.TASK_UPDATED
             );
         }
+        auditLogService.record("Task", saved.getId(), "UPDATED", "Task details updated");
         boardEventService.broadcastBoardUpdate();
         return saved;
     }
@@ -140,6 +148,7 @@ public class TaskService {
                     NotificationType.TASK_STATUS_CHANGED
             );
         }
+        auditLogService.record("Task", task.getId(), "STATUS_CHANGED", "Status changed to " + targetStatus);
         boardEventService.broadcastBoardUpdate();
     }
 

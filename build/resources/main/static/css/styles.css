@@ -1,0 +1,195 @@
+body {
+    font-family: Jetbrains Mono;
+    background-color: #f4f4f4;
+    margin: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+h2{
+    color: rgb(30,30,30);
+}
+
+.container {
+    display: flex; /* Dynamische Anordnung der child-elements*/
+    flex-direction: row; /* Elemente sollen zeilenweise dargestellt werden*/
+    width: 100%; /* Container ist halb so breit wie die Seite*/
+    flex-wrap: wrap; /* falls mehr Elemente im Container sind, als in eine Zeile passen, wird eine neue Zeile begonnen*/
+}
+
+.tile {
+    width: 200px;
+    height: 242px;
+    display: flex;
+    background-color: white;
+    border-radius: 10px; /* Ecken abrunden*/
+    margin: 8px 8px 8px 8px; /* Abstand zwischen den einzelnen Elementen*/
+    flex-direction: column; /* Elemente sollen in einer Spalte angeordnet werden*/
+    justify-content: start; /* children sollen am unteren Ende angeordnet sein */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+
+.tile span {
+    align-self:  center; /* Mittig innerhalb des umschließenden Elementes*/
+
+}
+
+.tile:hover{
+    background-color: lightgreen; /* Wenn man mit der Maus auf einem Element ist, soll es ein Highlight geben */
+    cursor: pointer;
+}
+
+.tile img{
+    border-radius: 10px 10px 0 0;
+    height: 200px;
+    object-fit: cover;
+}
+
+.dialog{
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+    width: 300px;
+
+}
+
+.dialog::backdrop{
+    background: rgba(0, 0, 0, 0.3);
+}
+
+#addUserContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dialog h2 {
+    margin-bottom: 0.8em;
+    text-align: center;
+}
+
+.btn-cancel {
+    right: 15px;
+    position: absolute;
+    background: none;
+    border: none;
+    display: inline;
+}
+
+.btn-submit {
+    bottom: 1em;
+    right: 2em;
+    width: 100px;
+    height: 28px;
+    background: rgb(80,100,210);
+    border: none;
+    border-radius: 5px;
+    color: rgb(245,245,245);
+    align-self: end;
+    margin-top: 10px;
+}
+
+.btn-submit:hover{
+    background: rgb(110,120,230);
+    cursor: pointer;
+}
+
+.btn-cancel {
+    top: 1em;
+    right: 15px;
+    position: absolute;
+    background: none;
+    border: none;
+    font-size: large;
+    color: rgb(30,30,30);
+}
+.btn-cancel:hover {
+    color: rgb(80,80,80);
+    transition: background 0.1s ease-in-out;
+    cursor: pointer;
+}
+.inputBox input {
+    height: 2em;
+    padding-left: 0.8em;
+    padding-top: 0.2em;
+    min-width: 16em;
+    font-family: inherit;
+}
+.inputBox input:focus {
+    outline: 0;
+}
+.inputBox {
+    margin-bottom: 1em;
+}
+.inputBox label{
+    position: absolute;
+    display: inline;
+    left: 0;
+    margin-left: 4.2em;
+    margin-top: 9px;
+    font-size: 0.9em;
+    color: rgb(30,30,30);
+    transition: 0.3s;
+    pointer-events: none;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.inputBox input:focus ~label, .inputBox input:not(:placeholder-shown) ~label {
+    transform: translateX(17px) translateY(-16px);
+    font-size: 0.7em;
+    background: rgb(255, 255, 255);
+    pointer-events: auto;
+}
+button {
+    font-family: inherit;
+}
+.inputFile input {
+    height: 2em;
+    padding-top: 0.2em;
+    font-family: inherit;
+    align-self: center;
+}
+
+#addUserContainer input[type="file"]::file-selector-button{
+    background-color: rgb(80, 100, 210);
+    color: rgb(245, 245, 245);
+    border-radius: 5px;
+    border: none;
+    padding: 5px 5px 5px 5px;
+}
+#addUserContainer input[type="file"]::file-selector-button:hover{
+    background: rgb(110,120,230);
+    cursor: pointer;
+}
+
+#addUserButton {
+    margin-left: 8px;
+    background-color: #6eb678;
+    border: none;
+    border-radius: 5px;
+    color: rgb(245,245,245);
+    padding: 1px 5px 1px 5px;
+}
+#addUserButton i {
+    font-size: 25px;
+}
+
+#addUserButton:hover {
+    background-color: #44884d;
+    cursor: pointer;
+}
+
+.tile img {
+    object-fit: cover;
+    width: 194px;
+    height: 195px;
+    object-position: center center;
+    align-self: center;
+    justify-self: center;
+    margin: 5px auto auto;
+}

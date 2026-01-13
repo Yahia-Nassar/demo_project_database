@@ -24,6 +24,10 @@ public class UserStory {
     @Enumerated(EnumType.STRING)
     private UserStoryStatus status;
 
+    @Version
+    private Long version;
+
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "userstory_developers",
@@ -91,5 +95,12 @@ public class UserStory {
     public void setStatus(UserStoryStatus status) {
         this.status = status;
     }
-}
 
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+}
