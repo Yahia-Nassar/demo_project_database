@@ -37,6 +37,8 @@ public class SecurityConfig {
                 .requestMatchers(
                     mvc.pattern("/login"),
                     mvc.pattern("/register"),
+                    mvc.pattern("/password-reset/**"),
+                    mvc.pattern("/password-reset"),
                     mvc.pattern("/css/**"),
                     mvc.pattern("/js/**")
                 ).permitAll()

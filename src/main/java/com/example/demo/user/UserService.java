@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 
 import com.example.demo.security.Role;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -57,8 +58,17 @@ public class UserService {
         return repository.findByEmail(email).orElseThrow();
     }
 
+    public Optional<User> findByEmailOptional(String email) {
+        return repository.findByEmail(email);
+    }
+
     public List<User> findDevelopers() {
         return repository.findByRole(Role.DEVELOPER);
+    }
+
+    public void updatePassword(User user, String rawPassword) {
+        user.setPassword(encoder.encode(rawPassword));
+        repository.save(user);
     }
 
 }
