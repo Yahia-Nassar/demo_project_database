@@ -5,6 +5,7 @@ import com.example.demo.userstory.UserStory;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -18,6 +19,10 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
+
+    private Double estimateHours;
+    private Double actualHours;
+    private LocalDateTime completedAt;
 
     @ManyToOne(optional = false)
     private UserStory story;
@@ -54,6 +59,30 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public Double getEstimateHours() {
+        return estimateHours;
+    }
+
+    public void setEstimateHours(Double estimateHours) {
+        this.estimateHours = estimateHours;
+    }
+
+    public Double getActualHours() {
+        return actualHours;
+    }
+
+    public void setActualHours(Double actualHours) {
+        this.actualHours = actualHours;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
     }
 
     public UserStory getStory() {

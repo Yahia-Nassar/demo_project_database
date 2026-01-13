@@ -30,10 +30,12 @@ public class UserStoryController {
     @GetMapping("/backlog")
     public String backlog(
             @RequestParam(name = "sort", required = false) String sort,
+            @RequestParam(name = "query", required = false) String query,
             Model model
     ) {
-        model.addAttribute("stories", service.backlog(sort));
+        model.addAttribute("stories", service.backlog(sort, query));
         model.addAttribute("sort", sort);
+        model.addAttribute("query", query);
         return "backlog";
     }
 

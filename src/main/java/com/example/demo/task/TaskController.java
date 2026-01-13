@@ -9,7 +9,6 @@ import com.example.demo.user.UserService;
 
 import java.util.List;
 
-
 @Controller
 @RequestMapping("/tasks")
 public class TaskController {
@@ -17,7 +16,7 @@ public class TaskController {
     private final TaskService service;
     private final UserService userService;
 
-     public TaskController(TaskService service, UserService userService) {
+    public TaskController(TaskService service, UserService userService) {
         this.service = service;
         this.userService = userService;
     }
@@ -65,9 +64,17 @@ public class TaskController {
     public String edit(
             @PathVariable Long id,
             @RequestParam String title,
-            @RequestParam(name = "assignees", required = false) List<Long> assignees
+            @RequestParam(name = "assignees", required = false) List<Long> assignees,
+            @RequestParam(required = false) Double estimateHours,
+            @RequestParam(required = false) Double actualHours
     ) {
-        service.update(id, title, assignees == null ? List.of() : assignees);
+        service.updateDetails(
+                id,
+                title,
+                assignees == null ? List.of() : assignees,
+                estimateHours,
+                actualHours
+        );
         return "redirect:/board/sprint";
     }
 

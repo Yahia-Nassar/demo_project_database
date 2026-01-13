@@ -1,5 +1,8 @@
 package com.example.demo.task;
 
+import com.example.demo.board.BoardEventService;
+import com.example.demo.notification.NotificationService;
+import com.example.demo.notification.NotificationType;
 import com.example.demo.user.User;
 import com.example.demo.user.UserRepository;
 import com.example.demo.userstory.UserStory;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.time.LocalDateTime;
 
 @Service
 public class TaskService {
@@ -17,15 +21,21 @@ public class TaskService {
     private final TaskRepository taskRepo;
     private final UserStoryRepository storyRepo;
     private final UserRepository userRepo;
+    private final NotificationService notificationService;
+    private final BoardEventService boardEventService;
 
     public TaskService(
             TaskRepository taskRepo,
             UserStoryRepository storyRepo,
-            UserRepository userRepo
+            UserRepository userRepo,
+            NotificationService notificationService,
+            BoardEventService boardEventService
     ) {
         this.taskRepo = taskRepo;
         this.storyRepo = storyRepo;
         this.userRepo = userRepo;
+        this.notificationService = notificationService;
+        this.boardEventService = boardEventService;
     }
 
     public Task create(Long storyId, String title) {
@@ -36,7 +46,9 @@ public class TaskService {
         task.setStatus(TaskStatus.TODO);
         task.setStory(story);
 
-        return taskRepo.save(task);
+        Task saved = taskRepo.save(task);
+        boardEventService.broadcastBoardUpdate();
+        return saved;
     }
 
     public void assign(Long taskId, Long userId) {
@@ -49,6 +61,14 @@ public class TaskService {
         task.getAssignees().clear();
         task.getAssignees().addAll(users);
         taskRepo.save(task);
+        if (!users.isEmpty()) {
+            notificationService.notifyUsers(
+                    users,
+                    "Task assigned: " + task.getTitle(),
+                    NotificationType.TASK_ASSIGNED
+            );
+        }
+        boardEventService.broadcastBoardUpdate();
     }
 
     public Task findById(Long taskId) {
@@ -63,7 +83,35 @@ public class TaskService {
             task.getAssignees().clear();
             task.getAssignees().addAll(users);
         }
-        return taskRepo.save(task);
+        Task saved = taskRepo.save(task);
+        boardEventService.broadcastBoardUpdate();
+        return saved;
+    }
+
+    public Task updateDetails(Long taskId,
+                              String title,
+                              List<Long> assigneeIds,
+                              Double estimateHours,
+                              Double actualHours) {
+        Task task = taskRepo.findById(taskId).orElseThrow();
+        task.setTitle(title);
+        task.setEstimateHours(estimateHours);
+        task.setActualHours(actualHours);
+        if (assigneeIds != null) {
+            List<User> users = userRepo.findAllById(assigneeIds);
+            task.getAssignees().clear();
+            task.getAssignees().addAll(users);
+        }
+        Task saved = taskRepo.save(task);
+        if (!task.getAssignees().isEmpty()) {
+            notificationService.notifyUsers(
+                    task.getAssignees(),
+                    "Task updated: " + task.getTitle(),
+                    NotificationType.TASK_UPDATED
+            );
+        }
+        boardEventService.broadcastBoardUpdate();
+        return saved;
     }
 
     public void markDone(Long taskId) {
@@ -79,7 +127,20 @@ public class TaskService {
             );
         }
         task.setStatus(targetStatus);
+        if (targetStatus == TaskStatus.DONE) {
+            task.setCompletedAt(LocalDateTime.now());
+        } else if (current == TaskStatus.DONE) {
+            task.setCompletedAt(null);
+        }
         taskRepo.save(task);
+        if (!task.getAssignees().isEmpty()) {
+            notificationService.notifyUsers(
+                    task.getAssignees(),
+                    "Task \"" + task.getTitle() + "\" moved to " + targetStatus,
+                    NotificationType.TASK_STATUS_CHANGED
+            );
+        }
+        boardEventService.broadcastBoardUpdate();
     }
 
     public Set<TaskStatus> allowedTransitions(TaskStatus currentStatus) {
@@ -96,7 +157,6 @@ public class TaskService {
         };
     }
 
-
     public List<Task> forStory(Long storyId) {
         return taskRepo.findByStoryId(storyId);
     }
@@ -111,5 +171,9 @@ public class TaskService {
 
     public List<Task> sprintTasks() {
         return taskRepo.findByStory_Status(UserStoryStatus.SPRINT);
+    }
+
+    public List<Task> allTasks() {
+        return taskRepo.findAll();
     }
 }

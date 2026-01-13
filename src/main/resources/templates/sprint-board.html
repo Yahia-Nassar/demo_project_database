@@ -4,6 +4,38 @@
 
 <h1>Sprint Board</h1>
 
+<div id="board-updates" style="margin-bottom:8px; color:#555;"></div>
+
+<form method="get" action="/board/sprint" style="margin-bottom:12px;">
+    <label>
+        Search
+        <input type="text" name="query" th:value="${query}" placeholder="Task or story" />
+    </label>
+    <label>
+        Assignee
+        <select name="assigneeId">
+            <option value="">All</option>
+            <option th:each="dev : ${developers}"
+                    th:value="${dev.id}"
+                    th:text="${dev.email}"
+                    th:selected="${assigneeId != null and assigneeId == dev.id}">
+            </option>
+        </select>
+    </label>
+    <label>
+        Status
+        <select name="status">
+            <option value="">All</option>
+            <option th:each="status : ${T(com.example.demo.task.TaskStatus).values()}"
+                    th:value="${status}"
+                    th:text="${status}"
+                    th:selected="${statusFilter != null and statusFilter == status}">
+            </option>
+        </select>
+    </label>
+    <button type="submit">Filter</button>
+</form>
+
 <div style="display:flex; gap:16px; align-items:flex-start;">
     <div th:each="entry : ${columns}" style="border:1px solid #ccc; padding:12px; min-width:180px;">
         <h2 th:text="${entry.key}">Status</h2>
@@ -20,6 +52,11 @@
                 <span th:each="assignee, iter : ${task.assignees}">
                     <span th:text="${assignee.email}"></span><span th:if="${!iter.last}">, </span>
                 </span>
+            </div>
+
+            <div>
+                <small th:text="'Estimate: ' + (task.estimateHours != null ? task.estimateHours : '—') + 'h'"></small>
+                <small th:text="'Actual: ' + (task.actualHours != null ? task.actualHours : '—') + 'h'"></small>
             </div>
 
             <div>
@@ -63,6 +100,15 @@
 </div>
 
 <a href="/po/dashboard">Back to PO Dashboard</a>
+
+<script>
+    const boardUpdates = document.getElementById('board-updates');
+    const boardSource = new EventSource('/sse/board');
+    boardSource.addEventListener('board', () => {
+        boardUpdates.textContent = 'Board updated. Refreshing...';
+        window.location.reload();
+    });
+</script>
 
 </body>
 </html>

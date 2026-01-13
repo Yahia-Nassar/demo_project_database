@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Estimate Accuracy</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h1>Estimate vs Actual</h1>
+
+<div>
+    <canvas id="estimateChart" width="800" height="400"></canvas>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Task</th>
+        <th>Estimate (h)</th>
+        <th>Actual (h)</th>
+        <th>Completed</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="task : ${tasks}">
+        <td th:text="${task.title}"></td>
+        <td th:text="${task.estimateHours}"></td>
+        <td th:text="${task.actualHours}"></td>
+        <td th:text="${task.completedAt}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+    const labels = /*[[${labels}]]*/ [];
+    const estimates = /*[[${estimates}]]*/ [];
+    const actuals = /*[[${actuals}]]*/ [];
+/*]]>*/
+
+    const ctx = document.getElementById('estimateChart');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Estimate (h)',
+                    data: estimates,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                },
+                {
+                    label: 'Actual (h)',
+                    data: actuals,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<a href="/po/dashboard">Back to PO Dashboard</a>
+<a href="/dev/dashboard">Back to Developer Dashboard</a>
+
+</body>
+</html>

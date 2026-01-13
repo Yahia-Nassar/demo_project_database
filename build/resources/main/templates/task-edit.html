@@ -24,6 +24,16 @@
         </select>
     </div>
 
+    <div>
+        <label>Estimate (hours)</label>
+        <input type="number" step="0.1" name="estimateHours" th:value="${task.estimateHours}" />
+    </div>
+
+    <div>
+        <label>Actual (hours)</label>
+        <input type="number" step="0.1" name="actualHours" th:value="${task.actualHours}" />
+    </div>
+
     <button type="submit">Save</button>
 </form>
 

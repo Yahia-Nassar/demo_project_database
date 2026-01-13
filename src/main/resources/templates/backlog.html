@@ -9,11 +9,20 @@
 
 <a href="/stories/new">Create new story</a>
 
+<form method="get" action="/stories/backlog">
+    <label>
+        Search
+        <input type="text" name="query" th:value="${query}" placeholder="Title or description" />
+    </label>
+    <input type="hidden" name="sort" th:value="${sort}" />
+    <button type="submit">Filter</button>
+</form>
+
 <div>
     <span>Sort by priority:</span>
-    <a th:href="@{/stories/backlog(sort='priority_desc')}">High → Low</a>
-    <a th:href="@{/stories/backlog(sort='priority_asc')}">Low → High</a>
-    <a th:href="@{/stories/backlog}">Default</a>
+    <a th:href="@{/stories/backlog(sort='priority_desc', query=${query})}">High → Low</a>
+    <a th:href="@{/stories/backlog(sort='priority_asc', query=${query})}">Low → High</a>
+    <a th:href="@{/stories/backlog(query=${query})}">Default</a>
 </div>
 
 <ul>
