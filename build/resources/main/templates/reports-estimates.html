@@ -3,33 +3,47 @@
 <head>
     <title>Estimate Accuracy</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
+<div class="page">
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Estimate vs Actual</h1>
+            <p class="muted">Track accuracy across completed tasks.</p>
+        </div>
+        <div class="nav-links">
+            <a href="/po/dashboard">PO Dashboard</a>
+            <a href="/dev/dashboard">Developer Dashboard</a>
+            <a href="/board/sprint">Sprint Board</a>
+        </div>
+    </header>
 
-<h1>Estimate vs Actual</h1>
+    <div class="card" style="margin-bottom: 16px;">
+        <canvas id="estimateChart" width="800" height="400"></canvas>
+    </div>
 
-<div>
-    <canvas id="estimateChart" width="800" height="400"></canvas>
+    <div class="card">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Task</th>
+                <th>Estimate (h)</th>
+                <th>Actual (h)</th>
+                <th>Completed</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="task : ${tasks}">
+                <td th:text="${task.title}"></td>
+                <td th:text="${task.estimateHours}"></td>
+                <td th:text="${task.actualHours}"></td>
+                <td th:text="${task.completedAt}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
-
-<table>
-    <thead>
-    <tr>
-        <th>Task</th>
-        <th>Estimate (h)</th>
-        <th>Actual (h)</th>
-        <th>Completed</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="task : ${tasks}">
-        <td th:text="${task.title}"></td>
-        <td th:text="${task.estimateHours}"></td>
-        <td th:text="${task.actualHours}"></td>
-        <td th:text="${task.completedAt}"></td>
-    </tr>
-    </tbody>
-</table>
 
 <script th:inline="javascript">
 /*<![CDATA[*/
@@ -66,9 +80,6 @@
         }
     });
 </script>
-
-<a href="/po/dashboard">Back to PO Dashboard</a>
-<a href="/dev/dashboard">Back to Developer Dashboard</a>
 
 </body>
 </html>

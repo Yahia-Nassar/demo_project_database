@@ -1,29 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Assign developers</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
 <body>
+<div class="page">
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Assign developers</h1>
+            <p class="muted" th:text="${story.title}"></p>
+        </div>
+        <div class="nav-links">
+            <a href="/po/dashboard">PO Dashboard</a>
+            <a href="/stories/backlog">Backlog</a>
+        </div>
+    </header>
 
-<h1>Assign developers</h1>
-
-<h2 th:text="${story.title}"></h2>
-
-<form th:action="@{/stories/{id}/assign(id=${story.id})}" method="post">
-
-    <ul>
-        <li th:each="dev : ${developers}">
-            <label>
+    <form th:action="@{/stories/{id}/assign(id=${story.id})}" method="post" class="card form-stack">
+        <div class="card" th:each="dev : ${developers}">
+            <label class="form-row">
                 <input type="checkbox"
                        name="developers"
                        th:value="${dev.id}"
                        th:checked="${story.developers.contains(dev)}"/>
                 <span th:text="${dev.email}"></span>
             </label>
-        </li>
-    </ul>
+        </div>
 
-    <button type="submit">Save</button>
-</form>
-
-<a href="/po/dashboard">Back</a>
-
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/po/dashboard" class="btn btn-outline">Back</a>
+    </form>
+</div>
 </body>
 </html>

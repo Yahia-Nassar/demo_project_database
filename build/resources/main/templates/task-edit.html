@@ -2,42 +2,54 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Edit Task</title>
+    <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
 
-<h1>Edit Task</h1>
+<div class="page">
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Edit Task</h1>
+            <p class="muted">Update the title, assignees, and time tracking.</p>
+        </div>
+        <div class="nav-links">
+            <a href="/board/sprint">Sprint Board</a>
+            <a href="/notifications">Notifications</a>
+            <a href="/profile">My Profile</a>
+        </div>
+    </header>
 
-<form th:action="@{/tasks/{id}/edit(id=${task.id})}" method="post">
-    <div>
-        <label>Title</label>
-        <input type="text" name="title" th:value="${task.title}"/>
-    </div>
+    <form th:action="@{/tasks/{id}/edit(id=${task.id})}" method="post" class="card form-stack">
+        <label>
+            Title
+            <input type="text" name="title" th:value="${task.title}" class="input" />
+        </label>
 
-    <div>
-        <label>Assignees</label>
-        <select name="assignees" multiple size="5">
-            <option th:each="dev : ${developers}"
-                    th:value="${dev.id}"
-                    th:text="${dev.email}"
-                    th:selected="${task.assignees.contains(dev)}">
-            </option>
-        </select>
-    </div>
+        <label>
+            Assignees
+            <select name="assignees" multiple size="5" class="input">
+                <option th:each="dev : ${developers}"
+                        th:value="${dev.id}"
+                        th:text="${dev.email}"
+                        th:selected="${task.assignees.contains(dev)}">
+                </option>
+            </select>
+        </label>
 
-    <div>
-        <label>Estimate (hours)</label>
-        <input type="number" step="0.1" name="estimateHours" th:value="${task.estimateHours}" />
-    </div>
+        <label>
+            Estimate (hours)
+            <input type="number" step="0.1" name="estimateHours" th:value="${task.estimateHours}" class="input" />
+        </label>
 
-    <div>
-        <label>Actual (hours)</label>
-        <input type="number" step="0.1" name="actualHours" th:value="${task.actualHours}" />
-    </div>
+        <label>
+            Actual (hours)
+            <input type="number" step="0.1" name="actualHours" th:value="${task.actualHours}" class="input" />
+        </label>
 
-    <button type="submit">Save</button>
-</form>
-
-<a href="/board/sprint">Back to Sprint Board</a>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/board/sprint" class="btn btn-outline">Back to Sprint Board</a>
+    </form>
+</div>
 
 </body>
 </html>

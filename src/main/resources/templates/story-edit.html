@@ -2,31 +2,43 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Edit User Story</title>
+    <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
 
-<h1>Edit User Story</h1>
+<div class="page">
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Edit User Story</h1>
+            <p class="muted">Keep the backlog aligned by refining details.</p>
+        </div>
+        <div class="nav-links">
+            <a href="/stories/backlog">Backlog</a>
+            <a href="/po/dashboard">PO Dashboard</a>
+            <a href="/board/sprint">Sprint Board</a>
+        </div>
+    </header>
 
-<form th:action="@{/stories/{id}/edit(id=${story.id})}" th:object="${story}" method="post">
-    <div>
-        <label>Title</label>
-        <input type="text" th:field="*{title}" />
-    </div>
+    <form th:action="@{/stories/{id}/edit(id=${story.id})}" th:object="${story}" method="post" class="card form-stack">
+        <label>
+            Title
+            <input type="text" th:field="*{title}" class="input" />
+        </label>
 
-    <div>
-        <label>Description</label>
-        <textarea th:field="*{description}"></textarea>
-    </div>
+        <label>
+            Description
+            <textarea th:field="*{description}" class="input" rows="4"></textarea>
+        </label>
 
-    <div>
-        <label>Priority</label>
-        <input type="number" th:field="*{priority}" />
-    </div>
+        <label>
+            Priority
+            <input type="number" th:field="*{priority}" class="input" />
+        </label>
 
-    <button type="submit">Save</button>
-</form>
-
-<a href="/stories/backlog">Back to backlog</a>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/stories/backlog" class="btn btn-outline">Back to backlog</a>
+    </form>
+</div>
 
 </body>
 </html>

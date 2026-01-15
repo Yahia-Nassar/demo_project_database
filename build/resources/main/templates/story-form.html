@@ -2,31 +2,41 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>New User Story</title>
+    <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
+<div class="page">
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Create User Story</h1>
+            <p class="muted">Capture the next piece of value for the team.</p>
+        </div>
+        <div class="nav-links">
+            <a href="/stories/backlog">Backlog</a>
+            <a href="/po/dashboard">PO Dashboard</a>
+        </div>
+    </header>
 
-<h1>Create User Story</h1>
+    <form th:action="@{/stories/new}" th:object="${story}" method="post" class="card form-stack">
+        <label>
+            Title
+            <input type="text" th:field="*{title}" class="input" />
+        </label>
 
-<form th:action="@{/stories/new}" th:object="${story}" method="post">
-    <div>
-        <label>Title</label>
-        <input type="text" th:field="*{title}" />
-    </div>
+        <label>
+            Description
+            <textarea th:field="*{description}" class="input" rows="4"></textarea>
+        </label>
 
-    <div>
-        <label>Description</label>
-        <textarea th:field="*{description}"></textarea>
-    </div>
+        <label>
+            Priority
+            <input type="number" th:field="*{priority}" class="input" />
+        </label>
 
-    <div>
-        <label>Priority</label>
-        <input type="number" th:field="*{priority}" />
-    </div>
-
-    <button type="submit">Save</button>
-</form>
-
-<a href="/stories/backlog">Back to backlog</a>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/stories/backlog" class="btn btn-outline">Back to backlog</a>
+    </form>
+</div>
 
 </body>
 </html>

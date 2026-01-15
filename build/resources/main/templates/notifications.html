@@ -2,38 +2,50 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Notifications</title>
+    <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
+<div class="page">
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Notifications</h1>
+            <p class="muted" th:text="'Unread: ' + ${unreadCount}"></p>
+        </div>
+        <div class="nav-links">
+            <a href="/po/dashboard">PO Dashboard</a>
+            <a href="/dev/dashboard">Developer Dashboard</a>
+            <a href="/board/sprint">Sprint Board</a>
+            <a href="/profile">My Profile</a>
+        </div>
+    </header>
 
-<h1>Notifications</h1>
+    <div id="notification-stream" class="notice" style="display:none; margin-bottom: 12px;"></div>
 
-<div id="notification-stream" style="margin-bottom:8px; color:#555;"></div>
-
-<p th:text="'Unread: ' + ${unreadCount}"></p>
-
-<ul>
-    <li th:each="notification : ${notifications}">
-        <span th:text="${notification.message}"></span>
-        <small th:text="${notification.createdAt}"></small>
-        <span th:if="${notification.readAt == null}">(unread)</span>
-        <form th:action="@{/notifications/{id}/read(id=${notification.id})}"
-              method="post"
-              style="display:inline;">
-            <button type="submit">Mark read</button>
-        </form>
-    </li>
-</ul>
+    <div class="card">
+        <div th:each="notification : ${notifications}" class="card" style="margin-bottom: 12px;">
+            <div class="form-row" style="justify-content: space-between;">
+                <div>
+                    <strong th:text="${notification.message}"></strong>
+                    <div class="muted" th:text="${notification.createdAt}"></div>
+                </div>
+                <span class="pill" th:if="${notification.readAt == null}">Unread</span>
+            </div>
+            <form th:action="@{/notifications/{id}/read(id=${notification.id})}"
+                  method="post" style="margin-top: 8px;">
+                <button type="submit" class="btn btn-outline">Mark read</button>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
     const notificationStream = document.getElementById('notification-stream');
     const notificationSource = new EventSource('/sse/notifications');
     notificationSource.addEventListener('notification', (event) => {
+        notificationStream.style.display = 'block';
         notificationStream.textContent = 'New notification: ' + event.data;
     });
 </script>
-
-<a href="/po/dashboard">Back to PO Dashboard</a>
-<a href="/dev/dashboard">Back to Developer Dashboard</a>
 
 </body>
 </html>

@@ -28,10 +28,7 @@ public class PasswordResetController {
     @PostMapping("/password-reset")
     public String request(@RequestParam String email, Model model) {
         Optional<User> user = userService.findByEmailOptional(email);
-        if (user.isPresent()) {
-            PasswordResetToken token = resetService.createToken(user.get());
-            model.addAttribute("token", token.getToken());
-        }
+        user.ifPresent(resetService::createToken);
         model.addAttribute("email", email);
         return "password-reset-confirm";
     }

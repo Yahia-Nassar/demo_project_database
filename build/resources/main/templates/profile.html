@@ -2,42 +2,52 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Profile</title>
+    <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
 
-<h1>My Profile</h1>
+<div class="page">
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">My Profile</h1>
+            <p class="muted">Keep your personal details up to date.</p>
+        </div>
+        <div class="nav-links">
+            <a href="/po/dashboard">PO Dashboard</a>
+            <a href="/dev/dashboard">Developer Dashboard</a>
+            <a href="/board/sprint">Sprint Board</a>
+            <a href="/notifications">Notifications</a>
+        </div>
+    </header>
 
-<div>
-    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
-    <p><strong>Role:</strong> <span th:text="${user.role}"></span></p>
+    <div class="card" style="margin-bottom: 16px;">
+        <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+        <p><strong>Role:</strong> <span th:text="${user.role}"></span></p>
+    </div>
+
+    <form th:action="@{/profile}" th:object="${person}" method="post" class="card form-stack">
+        <label>
+            Name
+            <input type="text" th:field="*{name}" class="input" />
+        </label>
+
+        <label>
+            Age
+            <input type="number" th:field="*{alter}" class="input" />
+        </label>
+
+        <label>
+            Birth date
+            <input type="date" th:field="*{geburtsdatum}" class="input" />
+        </label>
+
+        <label>
+            Birth place
+            <input type="text" th:field="*{geburtsort}" class="input" />
+        </label>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
 </div>
-
-<form th:action="@{/profile}" th:object="${person}" method="post">
-    <div>
-        <label>Name</label>
-        <input type="text" th:field="*{name}" />
-    </div>
-
-    <div>
-        <label>Age</label>
-        <input type="number" th:field="*{alter}" />
-    </div>
-
-    <div>
-        <label>Birth date</label>
-        <input type="date" th:field="*{geburtsdatum}" />
-    </div>
-
-    <div>
-        <label>Birth place</label>
-        <input type="text" th:field="*{geburtsort}" />
-    </div>
-
-    <button type="submit">Save</button>
-</form>
-
-<a href="/po/dashboard">Back to PO Dashboard</a>
-<a href="/dev/dashboard">Back to Developer Dashboard</a>
-
 </body>
 </html>
