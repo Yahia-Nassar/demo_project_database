@@ -22,9 +22,7 @@ public class ReportController {
 
     @GetMapping("/reports/estimates")
     public String estimates(Model model) {
-        List<Task> tasks = taskService.allTasks().stream()
-                .filter(task -> task.getEstimateHours() != null || task.getActualHours() != null)
-                .collect(Collectors.toList());
+        List<Task> tasks = taskService.allTasks();
         List<String> labels = tasks.stream()
                 .map(Task::getTitle)
                 .collect(Collectors.toList());

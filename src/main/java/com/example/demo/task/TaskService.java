@@ -102,7 +102,7 @@ public class TaskService {
                               Double actualHours) {
         Task task = taskRepo.findById(taskId).orElseThrow();
         task.setTitle(title);
-        task.setEstimateHours(estimateHours);
+task.setEstimateHours(estimateHours);
         task.setActualHours(actualHours);
         if (assigneeIds != null) {
             List<User> users = userRepo.findAllById(assigneeIds);
@@ -127,6 +127,9 @@ public class TaskService {
     }
 
     public void changeStatus(Long taskId, TaskStatus targetStatus) {
+        if (targetStatus == null) {
+            throw new IllegalArgumentException("Target status must be provided");
+        }
         Task task = taskRepo.findById(taskId).orElseThrow();
         TaskStatus current = task.getStatus();
         if (!allowedTransitions(current).contains(targetStatus)) {
@@ -153,17 +156,7 @@ public class TaskService {
     }
 
     public Set<TaskStatus> allowedTransitions(TaskStatus currentStatus) {
-        if (currentStatus == null) {
-            return EnumSet.of(TaskStatus.TODO);
-        }
-        return switch (currentStatus) {
-            case TODO -> EnumSet.of(TaskStatus.IN_PROGRESS, TaskStatus.BLOCKED);
-            case IN_PROGRESS -> EnumSet.of(TaskStatus.REVIEW, TaskStatus.BLOCKED, TaskStatus.TODO);
-            case REVIEW -> EnumSet.of(TaskStatus.TEST, TaskStatus.BLOCKED, TaskStatus.IN_PROGRESS);
-            case TEST -> EnumSet.of(TaskStatus.DONE, TaskStatus.BLOCKED, TaskStatus.IN_PROGRESS);
-            case BLOCKED -> EnumSet.of(TaskStatus.IN_PROGRESS, TaskStatus.TODO);
-            case DONE -> EnumSet.of(TaskStatus.IN_PROGRESS);
-        };
+         return EnumSet.allOf(TaskStatus.class);
     }
 
     public List<Task> forStory(Long storyId) {

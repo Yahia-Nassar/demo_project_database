@@ -4,6 +4,7 @@ import com.example.demo.task.Task;
 import com.example.demo.task.TaskService;
 import com.example.demo.task.TaskStatus;
 import com.example.demo.user.UserService;
+import com.example.demo.userstory.UserStoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,10 +26,12 @@ public class SprintBoardPageController {
 
     private final TaskService taskService;
     private final UserService userService;
+    private final UserStoryService userStoryService;
 
-    public SprintBoardPageController(TaskService taskService, UserService userService) {
+    public SprintBoardPageController(TaskService taskService, UserService userService, UserStoryService userStoryService) {
         this.taskService = taskService;
         this.userService = userService;
+        this.userStoryService = userStoryService;
     }
 
     @GetMapping("/sprint")
@@ -76,6 +79,7 @@ public class SprintBoardPageController {
         model.addAttribute("transitions", transitions);
         model.addAttribute("normalizedStatuses", normalizedStatuses);
         model.addAttribute("developers", userService.findDevelopers());
+        model.addAttribute("stories", userStoryService.sprint());
         model.addAttribute("query", query);
         model.addAttribute("assigneeId", assigneeId);
         model.addAttribute("statusFilter", status);

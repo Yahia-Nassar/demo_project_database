@@ -21,7 +21,8 @@
     </header>
 
     <p th:if="${param.error}" class="error">
-        Another user updated this task. Please refresh and try again.
+        <span th:if="${param.error[0] == 'conflict'}">Another user updated this task. Please refresh and try again.</span>
+        <span th:if="${param.error[0] == 'invalid_status'}">Unable to change status. Please try again.</span>
     </p>
 
     <div id="board-updates" class="notice" style="display:none;"></div>
@@ -47,6 +48,24 @@
             </select>
             <button type="submit" class="btn btn-primary">Filter</button>
         </form>
+        <form th:if="${#authorization.expression('hasRole(''PO'')') and !stories.isEmpty()}"
+              th:action="@{/tasks/story}"
+              method="post"
+              class="form-row"
+              style="margin-top: 12px;">
+            <select name="storyId"
+                    class="input">
+                <option th:each="story : ${stories}"
+                        th:value="${story.id}"
+                        th:text="${story.title}">
+                </option>
+            </select>
+            <input type="text" name="title" placeholder="New task title" class="input" required />
+            <button type="submit" class="btn btn-primary">Add task</button>
+        </form>
+        <p class="muted" th:if="${#authorization.expression('hasRole(''PO'')') and stories.isEmpty()}">
+            Move a story to Sprint before creating tasks.
+        </p>
     </div>
 
     <div class="board">
@@ -61,7 +80,9 @@
             <div th:each="task : ${entry.value}" class="board-card">
                 <div class="form-row" style="justify-content: space-between;">
                     <strong th:text="${task.title}">Task title</strong>
-                    <a th:href="@{/tasks/{id}/edit(id=${task.id})}" class="btn btn-link">Edit</a>
+                    <form th:action="@{/tasks/{id}/edit(id=${task.id})}" method="get">
+                        <button type="submit" class="btn btn-link">Edit</button>
+                    </form>
                 </div>
                 <div class="muted" th:text="${task.story.title}">Story title</div>
                 <div class="badge-group" th:if="${!task.assignees.isEmpty()}">
@@ -85,18 +106,20 @@
                     <button type="submit" class="btn btn-outline">Save assignees</button>
                 </form>
 
-                <div class="form-row" style="margin-top: 10px;">
-                    <form th:each="nextStatus : ${transitions[task.id]}"
-                          th:action="@{/tasks/{id}/status(id=${task.id})}"
-                          method="post">
-                        <input type="hidden" name="status" th:value="${nextStatus}"/>
-                        <input type="hidden" name="returnUrl" th:value="${returnUrl}"/>
-                        <button type="submit" class="btn btn-primary"
-                                th:text="${normalizedStatuses[task.id].name() == 'DONE' and nextStatus.name() == 'IN_PROGRESS'} ? 'Mark Incomplete' : 'Move to ' + nextStatus">
-                            Move
-                        </button>
-                    </form>
-                </div>
+                <form th:action="@{/tasks/{id}/status(id=${task.id})}"
+                      method="post"
+                      class="form-row"
+                      style="margin-top: 10px;">
+                    <input type="hidden" name="returnUrl" th:value="${returnUrl}"/>
+                    <select name="status" class="input">
+                        <option th:each="statusOption : ${T(com.example.demo.task.TaskStatus).values()}"
+                                th:value="${statusOption.name()}"
+                                th:text="'Move to ' + ${statusOption}"
+                                th:selected="${normalizedStatuses[task.id] == statusOption}">
+                        </option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Update status</button>
+                </form>
             </div>
         </div>
     </div>

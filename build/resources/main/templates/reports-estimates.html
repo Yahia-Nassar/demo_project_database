@@ -20,6 +20,15 @@
     </header>
 
     <div class="card" style="margin-bottom: 16px;">
+        <p class="muted">
+            Tip: create tasks from the Sprint Board and open each task to add estimate and actual hours.
+        </p>
+        <div class="form-row">
+            <a href="/board/sprint" class="btn btn-primary">Go to Sprint Board</a>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 16px;">
         <canvas id="estimateChart" width="800" height="400"></canvas>
     </div>
 
@@ -31,14 +40,20 @@
                 <th>Estimate (h)</th>
                 <th>Actual (h)</th>
                 <th>Completed</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="task : ${tasks}">
                 <td th:text="${task.title}"></td>
-                <td th:text="${task.estimateHours}"></td>
-                <td th:text="${task.actualHours}"></td>
-                <td th:text="${task.completedAt}"></td>
+                <td th:text="${task.estimateHours != null ? task.estimateHours : '—'}"></td>
+                <td th:text="${task.actualHours != null ? task.actualHours : '—'}"></td>
+                <td th:text="${task.completedAt != null ? task.completedAt : '—'}"></td>
+                <td>
+                    <form th:action="@{/tasks/{id}/edit(id=${task.id})}" method="get">
+                        <button type="submit" class="btn btn-outline">Edit task</button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>

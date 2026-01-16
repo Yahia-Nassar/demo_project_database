@@ -33,6 +33,16 @@ public class TaskController {
         return "redirect:/po/dashboard";
     }
 
+    @PreAuthorize("hasRole('PO')")
+    @PostMapping("/story")
+    public String createFromBoard(
+            @RequestParam Long storyId,
+            @RequestParam String title
+    ) {
+        service.create(storyId, title);
+        return "redirect:/board/sprint";
+    }
+
     
     @PreAuthorize("hasRole('DEVELOPER')")
     @PostMapping("/{id}/done")
@@ -59,9 +69,14 @@ public class TaskController {
 
     @PreAuthorize("hasRole('PO') or hasRole('DEVELOPER')")
     @GetMapping("/{id}/edit")
-    public String editForm(@PathVariable Long id, Model model) {
+    public String editForm(@PathVariable Long id,
+                           @RequestParam(required = false) String returnUrl,
+                           Model model) {
         model.addAttribute("task", service.findById(id));
         model.addAttribute("developers", userService.findDevelopers());
+        model.addAttribute("returnUrl", returnUrl == null || returnUrl.isBlank()
+                ? "/tasks/" + id + "/edit"
+                : returnUrl);
         return "task-edit";
     }
 
@@ -72,7 +87,8 @@ public class TaskController {
             @RequestParam String title,
             @RequestParam(name = "assignees", required = false) List<Long> assignees,
             @RequestParam(required = false) Double estimateHours,
-            @RequestParam(required = false) Double actualHours
+            @RequestParam(required = false) Double actualHours,
+            @RequestParam(required = false) String returnUrl
     ) {
         try {
             service.updateDetails(
@@ -82,9 +98,15 @@ public class TaskController {
                     estimateHours,
                     actualHours
             );
-            return "redirect:/board/sprint";
+            String redirectTarget = (returnUrl == null || returnUrl.isBlank())
+                    ? "/tasks/" + id + "/edit"
+                    : returnUrl;
+            return "redirect:" + redirectTarget;
         } catch (OptimisticLockingFailureException ex) {
-            return "redirect:/board/sprint?error=conflict";
+            String redirectTarget = (returnUrl == null || returnUrl.isBlank())
+                    ? "/tasks/" + id + "/edit?error=conflict"
+                    : returnUrl + (returnUrl.contains("?") ? "&" : "?") + "error=conflict";
+            return "redirect:" + redirectTarget;
         }
     }
 
@@ -92,15 +114,25 @@ public class TaskController {
     @PostMapping("/{id}/status")
     public String updateStatus(
             @PathVariable Long id,
-            @RequestParam TaskStatus status,
+            @RequestParam("status") String statusValue,
             @RequestParam(defaultValue = "/board/sprint") String returnUrl
     ) {
+        TaskStatus status;
+        try {
+            status = TaskStatus.valueOf(statusValue);
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            return "redirect:" + returnUrl + (returnUrl.contains("?") ? "&" : "?")
+                    + "error=invalid_status";
+        }
         try {
             service.changeStatus(id, status);
             return "redirect:" + returnUrl;
         } catch (OptimisticLockingFailureException ex) {
             return "redirect:" + returnUrl + (returnUrl.contains("?") ? "&" : "?")
                     + "error=conflict";
+        } catch (RuntimeException ex) {
+            return "redirect:" + returnUrl + (returnUrl.contains("?") ? "&" : "?")
+                    + "error=invalid_status";
         }
     }
 }
