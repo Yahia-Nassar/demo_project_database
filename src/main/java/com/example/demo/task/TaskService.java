@@ -102,7 +102,8 @@ public class TaskService {
                               List<Long> assigneeIds,
                               Double estimateHours,
                               Double actualHours,
-                              Integer priority) {
+                              Integer priority,
+                              String startedAt) {
         Task task = taskRepo.findById(taskId).orElseThrow();
         Double previousEstimate = task.getEstimateHours();
         task.setTitle(title);
@@ -110,6 +111,10 @@ public class TaskService {
         task.setActualHours(actualHours);
         if (priority != null) {
             task.setPriority(priority);
+        }
+        LocalDateTime parsedStartedAt = parseStartedAt(startedAt);
+        if (parsedStartedAt != null) {
+            task.setStartedAt(parsedStartedAt);
         }
         if (estimateHours != null && !estimateHours.equals(previousEstimate)) {
             task.setReminderSentAt(null);
@@ -132,6 +137,15 @@ public class TaskService {
         return saved;
     }
 
+    public Task updateDetails(Long taskId,
+                              String title,
+                              List<Long> assigneeIds,
+                              Double estimateHours,
+                              Double actualHours,
+                              Integer priority) {
+        return updateDetails(taskId, title, assigneeIds, estimateHours, actualHours, priority, null);
+    }
+
     public void markDone(Long taskId) {
         changeStatus(taskId, TaskStatus.DONE);
     }
@@ -148,6 +162,9 @@ public class TaskService {
             );
         }
         task.setStatus(targetStatus);
+        if (targetStatus == TaskStatus.IN_PROGRESS && task.getStartedAt() == null) {
+            task.setStartedAt(LocalDateTime.now());
+        }
         if (targetStatus == TaskStatus.DONE) {
             task.setCompletedAt(LocalDateTime.now());
         } else if (current == TaskStatus.DONE) {
@@ -167,6 +184,13 @@ public class TaskService {
 
     public Set<TaskStatus> allowedTransitions(TaskStatus currentStatus) {
          return EnumSet.allOf(TaskStatus.class);
+    }
+
+    private LocalDateTime parseStartedAt(String startedAt) {
+        if (startedAt == null || startedAt.isBlank()) {
+            return null;
+        }
+        return LocalDateTime.parse(startedAt);
     }
 
     public List<Task> forStory(Long storyId) {

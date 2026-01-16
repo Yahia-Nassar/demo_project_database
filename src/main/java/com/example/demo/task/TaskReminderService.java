@@ -4,6 +4,7 @@ import com.example.demo.notification.NotificationService;
 import com.example.demo.notification.NotificationType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,18 +24,22 @@ public class TaskReminderService {
     }
 
     @Scheduled(fixedDelayString = "${task.reminder.interval-ms:3600000}")
+    @Transactional
     public void sendDueSoonReminders() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime windowEnd = now.plus(DEFAULT_REMINDER_WINDOW);
-        List<Task> candidates = taskRepository.findByStatusNotAndEstimateHoursIsNotNull(TaskStatus.DONE);
+        List<Task> candidates = taskRepository.findWithAssigneesForReminder(TaskStatus.DONE);
         for (Task task : candidates) {
-            if (task.getCreatedAt() == null || task.getEstimateHours() == null) {
+            LocalDateTime anchorTime = task.getStartedAt() != null
+                    ? task.getStartedAt()
+                    : task.getCreatedAt();
+            if (anchorTime == null || task.getEstimateHours() == null) {
                 continue;
             }
             if (task.getReminderSentAt() != null) {
                 continue;
             }
-            LocalDateTime dueAt = task.getCreatedAt()
+            LocalDateTime dueAt = anchorTime
                     .plusMinutes(Math.round(task.getEstimateHours() * 60));
             if (dueAt.isAfter(now) && !dueAt.isAfter(windowEnd) && !task.getAssignees().isEmpty()) {
                 String message = "Task \"" + task.getTitle()

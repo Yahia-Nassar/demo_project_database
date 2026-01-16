@@ -55,6 +55,13 @@
                    class="input" placeholder="e.g. 1" />
         </label>
 
+        <label>
+            Started at
+            <input type="datetime-local" name="startedAt"
+                   th:value="${task.startedAt != null ? #temporals.format(task.startedAt, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                   class="input" />
+        </label>
+
         <button type="submit" class="btn btn-primary">Save</button>
         <a href="/board/sprint" class="btn btn-outline">Back to Sprint Board</a>
         <a href="/reports/estimates" class="btn btn-outline">Estimate Report</a>

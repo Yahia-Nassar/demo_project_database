@@ -29,6 +29,7 @@ public class Task {
     private Integer priority;
     private LocalDateTime createdAt;
     private LocalDateTime reminderSentAt;
+    private LocalDateTime startedAt;
 
     @ManyToOne(optional = false)
     private UserStory story;
@@ -121,6 +122,14 @@ public class Task {
 
     public void setReminderSentAt(LocalDateTime reminderSentAt) {
         this.reminderSentAt = reminderSentAt;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
     }
 
     public UserStory getStory() {
