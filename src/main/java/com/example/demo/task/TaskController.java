@@ -88,6 +88,7 @@ public class TaskController {
             @RequestParam(name = "assignees", required = false) List<Long> assignees,
             @RequestParam(required = false) Double estimateHours,
             @RequestParam(required = false) Double actualHours,
+            @RequestParam(required = false) Integer priority,
             @RequestParam(required = false) String returnUrl
     ) {
         try {
@@ -96,7 +97,8 @@ public class TaskController {
                     title,
                     assignees == null ? List.of() : assignees,
                     estimateHours,
-                    actualHours
+                    actualHours,
+                    priority
             );
             String redirectTarget = (returnUrl == null || returnUrl.isBlank())
                     ? "/tasks/" + id + "/edit"

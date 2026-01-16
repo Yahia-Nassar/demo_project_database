@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -53,6 +54,10 @@ public class SprintBoardPageController {
                     .filter(task -> task.getAssignees().stream().anyMatch(user -> assigneeId.equals(user.getId())))
                     .collect(Collectors.toList());
         }
+
+        tasks = tasks.stream()
+                .sorted(taskPriorityComparator())
+                .collect(Collectors.toList());
 
         Map<Long, TaskStatus> normalizedStatuses = tasks.stream()
                 .collect(Collectors.toMap(Task::getId, task -> normalizeStatus(task.getStatus())));
@@ -98,6 +103,14 @@ public class SprintBoardPageController {
         return task.getStory() != null
                 && task.getStory().getTitle() != null
                 && task.getStory().getTitle().toLowerCase().contains(query);
+    }
+
+    private Comparator<Task> taskPriorityComparator() {
+        return Comparator.comparing((Task task) -> {
+                    Integer priority = task.getPriority();
+                    return priority == null ? Integer.MAX_VALUE : priority;
+                })
+                .thenComparing(task -> task.getTitle() == null ? "" : task.getTitle().toLowerCase());
     }
 
     private String buildReturnUrl(String query, Long assigneeId, TaskStatus status) {

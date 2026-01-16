@@ -26,6 +26,9 @@ public class Task {
     private Double estimateHours;
     private Double actualHours;
     private LocalDateTime completedAt;
+    private Integer priority;
+    private LocalDateTime createdAt;
+    private LocalDateTime reminderSentAt;
 
     @ManyToOne(optional = false)
     private UserStory story;
@@ -94,6 +97,30 @@ public class Task {
 
     public void setCompletedAt(LocalDateTime completedAt) {
         this.completedAt = completedAt;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getReminderSentAt() {
+        return reminderSentAt;
+    }
+
+    public void setReminderSentAt(LocalDateTime reminderSentAt) {
+        this.reminderSentAt = reminderSentAt;
     }
 
     public UserStory getStory() {

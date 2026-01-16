@@ -89,8 +89,12 @@
                     <span class="badge" th:each="assignee : ${task.assignees}" th:text="${assignee.email}"></span>
                 </div>
                 <div class="form-row" style="margin-top: 8px;">
-                    <span class="muted" th:text="'Estimate: ' + (task.estimateHours != null ? task.estimateHours : '—') + 'h'"></span>
-                    <span class="muted" th:text="'Actual: ' + (task.actualHours != null ? task.actualHours : '—') + 'h'"></span>
+                    <span class="muted"
+                          th:text="${'Priority: ' + (task.priority != null ? task.priority : '—')}"></span>
+                    <span class="muted"
+                          th:text="${'Estimate: ' + (task.estimateHours != null ? task.estimateHours : '—') + 'h'}"></span>
+                    <span class="muted"
+                          th:text="${'Actual: ' + (task.actualHours != null ? task.actualHours : '—') + 'h'}"></span>
                 </div>
 
                 <form th:action="@{/tasks/{id}/assign(id=${task.id})}" method="post" class="form-stack" style="margin-top: 10px;">
@@ -119,6 +123,16 @@
                         </option>
                     </select>
                     <button type="submit" class="btn btn-primary">Update status</button>
+                </form>
+
+                <form th:action="@{/tasks/{id}/status(id=${task.id})}" method="post" class="form-row"
+                      style="margin-top: 8px;">
+                    <input type="hidden" name="returnUrl" th:value="${returnUrl}"/>
+                    <input type="hidden" name="status" th:value="${entry.key.name() == 'DONE' ? 'TODO' : 'DONE'}" />
+                    <button type="submit" class="btn btn-outline"
+                            th:text="${entry.key.name() == 'DONE' ? 'Mark incomplete' : 'Mark complete'}">
+                        Mark complete
+                    </button>
                 </form>
             </div>
         </div>

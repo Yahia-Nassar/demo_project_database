@@ -48,6 +48,8 @@ public class TaskService {
         Task task = new Task();
         task.setTitle(title);
         task.setStatus(TaskStatus.TODO);
+        task.setPriority(3);
+        task.setCreatedAt(LocalDateTime.now());
         task.setStory(story);
 
         Task saved = taskRepo.save(task);
@@ -99,11 +101,19 @@ public class TaskService {
                               String title,
                               List<Long> assigneeIds,
                               Double estimateHours,
-                              Double actualHours) {
+                              Double actualHours,
+                              Integer priority) {
         Task task = taskRepo.findById(taskId).orElseThrow();
+        Double previousEstimate = task.getEstimateHours();
         task.setTitle(title);
-task.setEstimateHours(estimateHours);
+        task.setEstimateHours(estimateHours);
         task.setActualHours(actualHours);
+        if (priority != null) {
+            task.setPriority(priority);
+        }
+        if (estimateHours != null && !estimateHours.equals(previousEstimate)) {
+            task.setReminderSentAt(null);
+        }
         if (assigneeIds != null) {
             List<User> users = userRepo.findAllById(assigneeIds);
             task.getAssignees().clear();

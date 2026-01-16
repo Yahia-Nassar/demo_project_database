@@ -49,9 +49,25 @@
                    class="input" placeholder="e.g. 3.5" />
         </label>
 
+        <label>
+            Priority (1 = highest)
+            <input type="number" step="1" min="1" max="5" name="priority" th:value="${task.priority}"
+                   class="input" placeholder="e.g. 1" />
+        </label>
+
         <button type="submit" class="btn btn-primary">Save</button>
         <a href="/board/sprint" class="btn btn-outline">Back to Sprint Board</a>
         <a href="/reports/estimates" class="btn btn-outline">Estimate Report</a>
+    </form>
+
+    <form th:action="@{/tasks/{id}/status(id=${task.id})}" method="post" class="card form-row"
+          style="margin-top: 16px;">
+        <input type="hidden" name="returnUrl" th:value="${returnUrl}"/>
+        <input type="hidden" name="status" th:value="${task.status == T(com.example.demo.task.TaskStatus).DONE ? 'TODO' : 'DONE'}" />
+        <button type="submit" class="btn btn-outline"
+                th:text="${task.status == T(com.example.demo.task.TaskStatus).DONE ? 'Mark incomplete' : 'Mark complete'}">
+            Mark complete
+        </button>
     </form>
 </div>
 
