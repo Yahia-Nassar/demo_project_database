@@ -7,7 +7,6 @@ import com.example.demo.user.User;
 import com.example.demo.user.UserRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -37,7 +36,6 @@ public class TaskReminderService {
     }
 
     @Scheduled(fixedDelayString = "${task.reminder.interval-ms:60000}")
-    @Transactional
     public void sendDueSoonReminders() {
         LocalDateTime now = LocalDateTime.now();
         List<Task> candidates = taskRepository.findWithAssigneesForReminder(TaskStatus.DONE);

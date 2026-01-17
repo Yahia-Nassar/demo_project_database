@@ -33,19 +33,31 @@ public class NotificationController {
 
     @PostMapping("/{id}/read")
     public String markRead(@PathVariable Long id) {
-        notificationService.markRead(id, userService.currentUser());
-        return "redirect:/notifications";
+        try {
+            notificationService.markRead(id, userService.currentUser());
+            return "redirect:/notifications";
+        } catch (RuntimeException ex) {
+            return "redirect:/notifications?error=action-failed";
+        }
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
-        notificationService.deleteNotification(id, userService.currentUser());
-        return "redirect:/notifications";
+        try {
+            notificationService.deleteNotification(id, userService.currentUser());
+            return "redirect:/notifications";
+        } catch (RuntimeException ex) {
+            return "redirect:/notifications?error=action-failed";
+        }
     }
 
     @PostMapping("/delete-read")
     public String deleteRead() {
-        notificationService.deleteRead(userService.currentUser());
-        return "redirect:/notifications";
+        try {
+            notificationService.deleteRead(userService.currentUser());
+            return "redirect:/notifications";
+        } catch (RuntimeException ex) {
+            return "redirect:/notifications?error=action-failed";
+        }
     }
 }
