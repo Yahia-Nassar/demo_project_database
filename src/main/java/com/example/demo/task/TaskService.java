@@ -138,7 +138,7 @@ public class TaskService {
         }
         Task saved = taskRepo.save(task);
         notifyStakeholders(
-                task.getAssignees(),
+                new java.util.ArrayList<>(task.getAssignees()),
                 "Task updated: " + task.getTitle(),
                 NotificationType.TASK_UPDATED
         );
@@ -183,7 +183,7 @@ public class TaskService {
         }
         taskRepo.save(task);
         notifyStakeholders(
-                task.getAssignees(),
+                new java.util.ArrayList<>(task.getAssignees()),
                 "Task \"" + task.getTitle() + "\" moved to " + targetStatus,
                 NotificationType.TASK_STATUS_CHANGED
         );

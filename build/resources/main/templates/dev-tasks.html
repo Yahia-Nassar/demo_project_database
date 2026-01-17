@@ -1,0 +1,12 @@
+<h1>My Tasks</h1>
+
+<ul>
+    <li th:each="t : ${tasks}">
+        <b th:text="${t.title}"></b>
+        —
+        <span th:text="${t.priority != null ? 'P' + t.priority : 'No priority'}"></span>
+        —
+        <span th:text="${t.status}"></span>
+    </li>
+</ul>
+<a href="/dev/dashboard">Back to Dashboard</a>

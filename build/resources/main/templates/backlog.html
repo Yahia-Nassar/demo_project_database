@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Backlog</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+<div class="page">
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Backlog</h1>
+            <p class="muted">Prioritize, edit, and move stories into the sprint.</p>
+        </div>
+        <div class="nav-links">
+            <a href="/po/dashboard">PO Dashboard</a>
+            <a href="/board/sprint">Sprint Board</a>
+            <a href="/notifications">Notifications</a>
+            <a href="/profile">My Profile</a>
+            <a href="/reports/estimates">Estimate Report</a>
+        </div>
+    </header>
+
+    <p th:if="${param.error}" class="error">
+        Another user updated this backlog item. Please refresh and try again.
+    </p>
+
+    <div class="card">
+        <div class="form-row" style="justify-content: space-between;">
+            <form method="get" action="/stories/backlog" class="form-row">
+                <input type="text" name="query" th:value="${query}" placeholder="Search title or description"
+                       class="input" />
+                <input type="hidden" name="sort" th:value="${sort}" />
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+            <div class="form-row">
+                <span class="muted">Sort by priority:</span>
+                <a class="btn btn-outline" th:href="@{/stories/backlog(sort='priority_desc', query=${query})}">High → Low</a>
+                <a class="btn btn-outline" th:href="@{/stories/backlog(sort='priority_asc', query=${query})}">Low → High</a>
+                <a class="btn btn-outline" th:href="@{/stories/backlog(query=${query})}">Default</a>
+            </div>
+        </div>
+        <div class="form-row" th:if="${#authorization.expression('hasRole(''PO'')')}">
+            <a class="btn btn-primary" href="/stories/new">Create new story</a>
+        </div>
+    </div>
+
+    <div class="card-grid cols-2" style="margin-top: 16px;">
+        <div class="card" th:each="story : ${stories}">
+            <div class="form-row" style="justify-content: space-between;">
+                <div>
+                    <strong th:text="${story.title}">Title</strong>
+                    <div class="muted" th:text="${story.description}">Description</div>
+                </div>
+                <span class="pill" th:text="'Priority ' + ${story.priority}">Priority</span>
+            </div>
+            <div class="form-row" style="margin-top: 8px;">
+                <a th:href="@{/stories/{id}/edit(id=${story.id})}" class="btn btn-outline">Edit</a>
+                <form th:if="${#authorization.expression('hasRole(''PO'')')}"
+                      th:action="@{/stories/{id}/sprint(id=${story.id})}"
+                      method="post">
+                    <button type="submit" class="btn btn-primary">Move to Sprint</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

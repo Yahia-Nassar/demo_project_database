@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Developer Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+<div class="page">
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">My Stories</h1>
+            <p class="muted">Track the stories you are assigned to in the current sprint.</p>
+        </div>
+        <div class="nav-links">
+            <a href="/board/sprint">Sprint Board</a>
+            <a href="/reports/estimates">Estimate Report</a>
+            <a href="/notifications">Notifications</a>
+            <a href="/profile">My Profile</a>
+        </div>
+    </header>
+
+    <div class="card-grid cols-2">
+        <div class="card" th:each="s : ${stories}">
+            <div class="form-row" style="justify-content: space-between;">
+                <strong th:text="${s.title}"></strong>
+                <span class="pill" th:text="${s.status}"></span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
