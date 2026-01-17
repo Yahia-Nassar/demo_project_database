@@ -5,16 +5,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
-
-import jakarta.transaction.Transactional;
 
 import com.example.demo.security.Role;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class UserService {
 
     private final UserRepository repository;
@@ -49,6 +47,7 @@ public class UserService {
     }
 
 
+    @Transactional
     public void register(User user) {
         user.setPassword(encoder.encode(user.getPassword()));
         repository.save(user);
@@ -66,6 +65,7 @@ public class UserService {
         return repository.findByRole(Role.DEVELOPER);
     }
 
+    @Transactional
     public void updatePassword(User user, String rawPassword) {
         user.setPassword(encoder.encode(rawPassword));
         repository.save(user);
