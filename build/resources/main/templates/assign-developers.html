@@ -11,7 +11,7 @@
             <h1 class="page-title">Assign developers</h1>
             <p class="muted" th:text="${story.title}"></p>
         </div>
-        <div th:replace="fragments/nav :: nav"></div>
+        <div th:replace="frag/nav :: nav"></div>
     </header>
 
     <form th:action="@{/stories/{id}/assign(id=${story.id})}" method="post" class="card form-stack">
