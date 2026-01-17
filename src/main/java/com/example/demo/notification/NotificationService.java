@@ -62,7 +62,8 @@ public class NotificationService {
 
     @Transactional
     public void deleteNotification(Long id, User user) {
-        repository.deleteByIdAndRecipient(id, user);
+        repository.findByIdAndRecipient(id, user)
+                .ifPresent(repository::delete);
     }
 
     @Transactional
