@@ -6,12 +6,14 @@ import com.example.demo.notification.NotificationService;
 import com.example.demo.notification.NotificationType;
 import com.example.demo.user.User;
 import com.example.demo.user.UserRepository;
+import com.example.demo.security.Role;
 import com.example.demo.userstory.UserStory;
 import com.example.demo.userstory.UserStoryStatus;
 import com.example.demo.userstory.UserStoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.time.LocalDateTime;
@@ -68,13 +70,11 @@ public class TaskService {
         task.getAssignees().clear();
         task.getAssignees().addAll(users);
         taskRepo.save(task);
-        if (!users.isEmpty()) {
-            notificationService.notifyUsers(
-                    users,
-                    "Task assigned: " + task.getTitle(),
-                    NotificationType.TASK_ASSIGNED
-            );
-        }
+        notifyStakeholders(
+                users,
+                "Task assigned: " + task.getTitle(),
+                NotificationType.TASK_ASSIGNED
+        );
         auditLogService.record("Task", task.getId(), "ASSIGNED", "Task assignees updated");
         boardEventService.broadcastBoardUpdate();
     }
@@ -103,9 +103,12 @@ public class TaskService {
                               Double estimateHours,
                               Double actualHours,
                               Integer priority,
-                              String startedAt) {
+                              String startedAt,
+                              Integer reminderLeadMinutes) {
         Task task = taskRepo.findById(taskId).orElseThrow();
         Double previousEstimate = task.getEstimateHours();
+        LocalDateTime previousStartedAt = task.getStartedAt();
+        Integer previousLeadMinutes = task.getReminderLeadMinutes();
         task.setTitle(title);
         task.setEstimateHours(estimateHours);
         task.setActualHours(actualHours);
@@ -116,7 +119,16 @@ public class TaskService {
         if (parsedStartedAt != null) {
             task.setStartedAt(parsedStartedAt);
         }
+        if (reminderLeadMinutes != null) {
+            task.setReminderLeadMinutes(reminderLeadMinutes);
+        }
         if (estimateHours != null && !estimateHours.equals(previousEstimate)) {
+            task.setReminderSentAt(null);
+        }
+        if (parsedStartedAt != null && !parsedStartedAt.equals(previousStartedAt)) {
+            task.setReminderSentAt(null);
+        }
+        if (reminderLeadMinutes != null && !reminderLeadMinutes.equals(previousLeadMinutes)) {
             task.setReminderSentAt(null);
         }
         if (assigneeIds != null) {
@@ -125,13 +137,11 @@ public class TaskService {
             task.getAssignees().addAll(users);
         }
         Task saved = taskRepo.save(task);
-        if (!task.getAssignees().isEmpty()) {
-            notificationService.notifyUsers(
-                    task.getAssignees(),
-                    "Task updated: " + task.getTitle(),
-                    NotificationType.TASK_UPDATED
-            );
-        }
+        notifyStakeholders(
+                task.getAssignees(),
+                "Task updated: " + task.getTitle(),
+                NotificationType.TASK_UPDATED
+        );
         auditLogService.record("Task", saved.getId(), "UPDATED", "Task details updated");
         boardEventService.broadcastBoardUpdate();
         return saved;
@@ -143,7 +153,7 @@ public class TaskService {
                               Double estimateHours,
                               Double actualHours,
                               Integer priority) {
-        return updateDetails(taskId, title, assigneeIds, estimateHours, actualHours, priority, null);
+        return updateDetails(taskId, title, assigneeIds, estimateHours, actualHours, priority, null, null);
     }
 
     public void markDone(Long taskId) {
@@ -164,6 +174,7 @@ public class TaskService {
         task.setStatus(targetStatus);
         if (targetStatus == TaskStatus.IN_PROGRESS && task.getStartedAt() == null) {
             task.setStartedAt(LocalDateTime.now());
+            task.setReminderSentAt(null);
         }
         if (targetStatus == TaskStatus.DONE) {
             task.setCompletedAt(LocalDateTime.now());
@@ -171,13 +182,11 @@ public class TaskService {
             task.setCompletedAt(null);
         }
         taskRepo.save(task);
-        if (!task.getAssignees().isEmpty()) {
-            notificationService.notifyUsers(
-                    task.getAssignees(),
-                    "Task \"" + task.getTitle() + "\" moved to " + targetStatus,
-                    NotificationType.TASK_STATUS_CHANGED
-            );
-        }
+        notifyStakeholders(
+                task.getAssignees(),
+                "Task \"" + task.getTitle() + "\" moved to " + targetStatus,
+                NotificationType.TASK_STATUS_CHANGED
+        );
         auditLogService.record("Task", task.getId(), "STATUS_CHANGED", "Status changed to " + targetStatus);
         boardEventService.broadcastBoardUpdate();
     }
@@ -190,7 +199,19 @@ public class TaskService {
         if (startedAt == null || startedAt.isBlank()) {
             return null;
         }
-        return LocalDateTime.parse(startedAt);
+        try {
+            return LocalDateTime.parse(startedAt);
+        } catch (RuntimeException ex) {
+            return null;
+        }
+    }
+
+    private void notifyStakeholders(List<User> assignees, String message, NotificationType type) {
+        Set<User> recipients = new HashSet<>(assignees == null ? List.of() : assignees);
+        recipients.addAll(userRepo.findByRole(Role.PO));
+        if (!recipients.isEmpty()) {
+            notificationService.notifyUsers(recipients, message, type);
+        }
     }
 
     public List<Task> forStory(Long storyId) {

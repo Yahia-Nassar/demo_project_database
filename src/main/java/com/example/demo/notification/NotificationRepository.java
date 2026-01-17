@@ -8,4 +8,6 @@ import java.util.List;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     List<Notification> findByRecipientOrderByCreatedAtDesc(User recipient);
     List<Notification> findByRecipientAndReadAtIsNullOrderByCreatedAtDesc(User recipient);
+    void deleteByIdAndRecipient(Long id, User recipient);
+    void deleteByRecipientAndReadAtIsNotNull(User recipient);
 }

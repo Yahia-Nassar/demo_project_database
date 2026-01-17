@@ -89,6 +89,8 @@ public class TaskController {
             @RequestParam(required = false) Double estimateHours,
             @RequestParam(required = false) Double actualHours,
             @RequestParam(required = false) Integer priority,
+            @RequestParam(required = false) String startedAt,
+            @RequestParam(required = false) Integer reminderLeadMinutes,
             @RequestParam(required = false) String returnUrl
     ) {
         try {
@@ -98,7 +100,9 @@ public class TaskController {
                     assignees == null ? List.of() : assignees,
                     estimateHours,
                     actualHours,
-                    priority
+                    priority,
+                    startedAt,
+                    reminderLeadMinutes
             );
             String redirectTarget = (returnUrl == null || returnUrl.isBlank())
                     ? "/tasks/" + id + "/edit"

@@ -60,6 +60,18 @@ public class NotificationService {
         }
     }
 
+    public void deleteNotification(Long id, User user) {
+        Notification notification = repository.findById(id).orElseThrow();
+        if (!notification.getRecipient().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Not allowed to delete this notification");
+        }
+        repository.delete(notification);
+    }
+
+    public void deleteRead(User user) {
+        repository.deleteByRecipientAndReadAtIsNotNull(user);
+    }
+
     public SseEmitter subscribe(Long userId) {
         SseEmitter emitter = new SseEmitter(SSE_TIMEOUT_MS);
         emitters.computeIfAbsent(userId, key -> new CopyOnWriteArrayList<>()).add(emitter);

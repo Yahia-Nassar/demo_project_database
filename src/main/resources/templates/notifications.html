@@ -22,6 +22,9 @@
     <div id="notification-stream" class="notice" style="display:none; margin-bottom: 12px;"></div>
 
     <div class="card">
+        <form th:action="@{/notifications/delete-read}" method="post" style="margin-bottom: 12px;">
+            <button type="submit" class="btn btn-outline">Delete read notifications</button>
+        </form>
         <div th:each="notification : ${notifications}" class="card" style="margin-bottom: 12px;">
             <div class="form-row" style="justify-content: space-between;">
                 <div>
@@ -30,10 +33,16 @@
                 </div>
                 <span class="pill" th:if="${notification.readAt == null}">Unread</span>
             </div>
-            <form th:action="@{/notifications/{id}/read(id=${notification.id})}"
-                  method="post" style="margin-top: 8px;">
-                <button type="submit" class="btn btn-outline">Mark read</button>
-            </form>
+            <div class="form-row" style="margin-top: 8px;">
+                <form th:action="@{/notifications/{id}/read(id=${notification.id})}"
+                      method="post">
+                    <button type="submit" class="btn btn-outline">Mark read</button>
+                </form>
+                <form th:action="@{/notifications/{id}/delete(id=${notification.id})}"
+                      method="post">
+                    <button type="submit" class="btn btn-outline">Delete</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
