@@ -11,12 +11,7 @@
             <h1 class="page-title">Notifications</h1>
             <p class="muted" th:text="'Unread: ' + ${unreadCount}"></p>
         </div>
-        <div class="nav-links">
-            <a href="/po/dashboard">PO Dashboard</a>
-            <a href="/dev/dashboard">Developer Dashboard</a>
-            <a href="/board/sprint">Sprint Board</a>
-            <a href="/profile">My Profile</a>
-        </div>
+        <div th:replace="fragments/nav :: nav"></div>
     </header>
 
     <div id="notification-stream" class="notice" style="display:none; margin-bottom: 12px;"></div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Edit User Story</title>
     <link rel="stylesheet" href="/css/styles.css" />
@@ -12,11 +12,7 @@
             <h1 class="page-title">Edit User Story</h1>
             <p class="muted">Keep the backlog aligned by refining details.</p>
         </div>
-        <div class="nav-links">
-            <a href="/stories/backlog">Backlog</a>
-            <a href="/po/dashboard">PO Dashboard</a>
-            <a href="/board/sprint">Sprint Board</a>
-        </div>
+        <div th:replace="fragments/nav :: nav"></div>
     </header>
 
     <form th:action="@{/stories/{id}/edit(id=${story.id})}" th:object="${story}" method="post" class="card form-stack">

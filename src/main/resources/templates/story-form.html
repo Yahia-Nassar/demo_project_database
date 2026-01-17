@@ -11,10 +11,7 @@
             <h1 class="page-title">Create User Story</h1>
             <p class="muted">Capture the next piece of value for the team.</p>
         </div>
-        <div class="nav-links">
-            <a href="/stories/backlog">Backlog</a>
-            <a href="/po/dashboard">PO Dashboard</a>
-        </div>
+        <div th:replace="fragments/nav :: nav"></div>
     </header>
 
     <form th:action="@{/stories/new}" th:object="${story}" method="post" class="card form-stack">

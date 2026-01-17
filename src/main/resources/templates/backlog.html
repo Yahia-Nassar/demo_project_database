@@ -11,13 +11,7 @@
             <h1 class="page-title">Backlog</h1>
             <p class="muted">Prioritize, edit, and move stories into the sprint.</p>
         </div>
-        <div class="nav-links">
-            <a href="/po/dashboard">PO Dashboard</a>
-            <a href="/board/sprint">Sprint Board</a>
-            <a href="/notifications">Notifications</a>
-            <a href="/profile">My Profile</a>
-            <a href="/reports/estimates">Estimate Report</a>
-        </div>
+        <div th:replace="fragments/nav :: nav"></div>
     </header>
 
     <p th:if="${param.error}" class="error">

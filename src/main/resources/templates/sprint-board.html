@@ -11,13 +11,7 @@
             <h1 class="page-title">Sprint Board</h1>
             <p class="muted">Move work across the workflow and keep assignees updated.</p>
         </div>
-        <div class="nav-links">
-            <a href="/po/dashboard">PO Dashboard</a>
-            <a href="/stories/backlog">Backlog</a>
-            <a href="/notifications">Notifications</a>
-            <a href="/profile">My Profile</a>
-            <a href="/reports/estimates">Estimate Report</a>
-        </div>
+        <div th:replace="fragments/nav :: nav"></div>
     </header>
 
     <p th:if="${param.error}" class="error">

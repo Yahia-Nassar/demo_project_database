@@ -11,13 +11,7 @@
             <h1 class="page-title">PO Dashboard</h1>
             <p class="muted">Manage backlog priorities, assign developers, and plan sprint work.</p>
         </div>
-        <div class="nav-links">
-            <a href="/stories/backlog">Backlog</a>
-            <a href="/board/sprint">Sprint Board</a>
-            <a href="/reports/estimates">Estimate Report</a>
-            <a href="/notifications">Notifications</a>
-            <a href="/profile">My Profile</a>
-        </div>
+        <div th:replace="fragments/nav :: nav"></div>
     </header>
 
     <div class="card-grid cols-2">
