@@ -1,0 +1,24 @@
+<th:block xmlns:th="http://www.thymeleaf.org"
+          xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+          th:fragment="nav">
+    <div class="nav-links">
+        <a href="/po/dashboard"
+           data-path="/po"
+           sec:authorize="hasRole('PO')">PO Dashboard</a>
+        <a href="/dev/dashboard"
+           data-path="/dev"
+           sec:authorize="hasRole('DEVELOPER')">Developer Dashboard</a>
+        <a href="/stories/backlog"
+           data-path="/stories"
+           sec:authorize="hasRole('PO')">Backlog</a>
+        <a href="/board/sprint"
+           data-path="/board">Sprint Board</a>
+        <a href="/reports/estimates"
+           data-path="/reports">Estimate Report</a>
+        <a href="/notifications"
+           data-path="/notifications">Notifications</a>
+        <a href="/profile"
+           data-path="/profile">My Profile</a>
+    </div>
+    <script src="/js/nav-active.js" defer></script>
+</th:block>

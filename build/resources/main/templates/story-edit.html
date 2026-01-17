@@ -12,7 +12,7 @@
             <h1 class="page-title">Edit User Story</h1>
             <p class="muted">Keep the backlog aligned by refining details.</p>
         </div>
-        <div th:replace="~{fragments/nav :: nav}"></div>
+        <div th:replace="~{nav :: nav}"></div>
     </header>
 
     <form th:action="@{/stories/{id}/edit(id=${story.id})}" th:object="${story}" method="post" class="card form-stack">

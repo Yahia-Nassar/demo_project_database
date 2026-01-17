@@ -193,9 +193,11 @@ a:hover {
 }
 
 .nav-links a.is-active {
-    background: #e7f0ff;
-    box-shadow: 0 0 0 2px rgba(31, 111, 235, 0.25);
-    text-decoration: none;
+    color: #1f6feb;
+    text-decoration: underline;
+    text-decoration-color: #1f6feb;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
 }
 
 .card {
