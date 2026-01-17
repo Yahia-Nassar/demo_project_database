@@ -37,7 +37,7 @@ public class TaskReminderService {
         this.reminderLeadMinutes = reminderLeadMinutes;
     }
 
-    @Scheduled(fixedDelayString = "${task.reminder.interval-ms:3600000}")
+    @Scheduled(fixedDelayString = "${task.reminder.interval-ms:60000}")
     @Transactional
     public void sendDueSoonReminders() {
         LocalDateTime now = LocalDateTime.now();

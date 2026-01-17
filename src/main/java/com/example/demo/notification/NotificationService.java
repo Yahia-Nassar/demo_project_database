@@ -2,6 +2,7 @@ package com.example.demo.notification;
 
 import com.example.demo.user.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -49,25 +50,22 @@ public class NotificationService {
         return repository.findByRecipientAndReadAtIsNullOrderByCreatedAtDesc(user).size();
     }
 
+    @Transactional
     public void markRead(Long id, User user) {
-        Notification notification = repository.findById(id).orElseThrow();
-        if (!notification.getRecipient().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("Not allowed to modify this notification");
-        }
-        if (notification.getReadAt() == null) {
-            notification.setReadAt(LocalDateTime.now());
-            repository.save(notification);
-        }
+        repository.findByIdAndRecipient(id, user).ifPresent(notification -> {
+            if (notification.getReadAt() == null) {
+                notification.setReadAt(LocalDateTime.now());
+                repository.save(notification);
+            }
+        });
     }
 
+    @Transactional
     public void deleteNotification(Long id, User user) {
-        Notification notification = repository.findById(id).orElseThrow();
-        if (!notification.getRecipient().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("Not allowed to delete this notification");
-        }
-        repository.delete(notification);
+        repository.deleteByIdAndRecipient(id, user);
     }
 
+    @Transactional
     public void deleteRead(User user) {
         repository.deleteByRecipientAndReadAtIsNotNull(user);
     }
