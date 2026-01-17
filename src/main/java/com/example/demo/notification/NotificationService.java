@@ -19,7 +19,8 @@ public class NotificationService {
     private static final long SSE_TIMEOUT_MS = 0L;
 
     private final NotificationRepository repository;
-    private final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
+    private final Map<Long, List<SseEmitter>> emittersById = new ConcurrentHashMap<>();
+    private final Map<String, List<SseEmitter>> emittersByEmail = new ConcurrentHashMap<>();
 
     public NotificationService(NotificationRepository repository) {
         this.repository = repository;
@@ -73,15 +74,56 @@ public class NotificationService {
 
     public SseEmitter subscribe(Long userId) {
         SseEmitter emitter = new SseEmitter(SSE_TIMEOUT_MS);
-        emitters.computeIfAbsent(userId, key -> new CopyOnWriteArrayList<>()).add(emitter);
+        emittersById.computeIfAbsent(userId, key -> new CopyOnWriteArrayList<>()).add(emitter);
         emitter.onCompletion(() -> removeEmitter(userId, emitter));
         emitter.onTimeout(() -> removeEmitter(userId, emitter));
         emitter.onError(ex -> removeEmitter(userId, emitter));
         return emitter;
     }
 
+    public SseEmitter subscribeByEmail(String email) {
+        SseEmitter emitter = new SseEmitter(SSE_TIMEOUT_MS);
+        emittersByEmail.computeIfAbsent(email, key -> new CopyOnWriteArrayList<>()).add(emitter);
+        emitter.onCompletion(() -> removeEmitter(email, emitter));
+        emitter.onTimeout(() -> removeEmitter(email, emitter));
+        emitter.onError(ex -> removeEmitter(email, emitter));
+        return emitter;
+    }
+
     private void sendToUser(Long userId, Notification notification) {
-        List<SseEmitter> userEmitters = emitters.get(userId);
+        sendToEmitters(userId, notification);
+        if (notification.getRecipient() != null && notification.getRecipient().getEmail() != null) {
+            sendToEmitters(notification.getRecipient().getEmail(), notification);
+        }
+    }
+
+    private void removeEmitter(Long userId, SseEmitter emitter) {
+        List<SseEmitter> userEmitters = emittersById.get(userId);
+        if (userEmitters != null) {
+            userEmitters.remove(emitter);
+        }
+    }
+
+    private void removeEmitter(String email, SseEmitter emitter) {
+        List<SseEmitter> userEmitters = emittersByEmail.get(email);
+        if (userEmitters != null) {
+            userEmitters.remove(emitter);
+        }
+    }
+
+    private void sendToEmitters(Long userId, Notification notification) {
+        List<SseEmitter> userEmitters = emittersById.get(userId);
+        sendToEmitters(userEmitters, notification, emitter -> removeEmitter(userId, emitter));
+    }
+
+    private void sendToEmitters(String email, Notification notification) {
+        List<SseEmitter> userEmitters = emittersByEmail.get(email);
+        sendToEmitters(userEmitters, notification, emitter -> removeEmitter(email, emitter));
+    }
+
+    private void sendToEmitters(List<SseEmitter> userEmitters,
+                                Notification notification,
+                                java.util.function.Consumer<SseEmitter> cleanup) {
         if (userEmitters == null) {
             return;
         }
@@ -91,15 +133,8 @@ public class NotificationService {
                         .name("notification")
                         .data(notification.getMessage()));
             } catch (IOException ex) {
-                removeEmitter(userId, emitter);
+                cleanup.accept(emitter);
             }
-        }
-    }
-
-    private void removeEmitter(Long userId, SseEmitter emitter) {
-        List<SseEmitter> userEmitters = emitters.get(userId);
-        if (userEmitters != null) {
-            userEmitters.remove(emitter);
         }
     }
 }
