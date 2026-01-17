@@ -47,7 +47,7 @@ public class NotificationService {
     }
 
     public long unreadCount(User user) {
-        return repository.findByRecipientAndReadAtIsNullOrderByCreatedAtDesc(user).size();
+        return repository.countByRecipientAndReadAtIsNull(user);
     }
 
     @Transactional
