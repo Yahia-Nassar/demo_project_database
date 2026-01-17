@@ -1,7 +1,8 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<body>
-<div class="nav-links" th:fragment="nav" th:with="current=${#httpServletRequest.requestURI}">
+<div class="nav-links"
+     xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     th:fragment="nav"
+     th:with="current=${#request != null ? #request.requestURI : ''}">
     <a href="/po/dashboard"
        sec:authorize="hasRole('PO')"
        th:classappend="${current.startsWith('/po')} ? 'is-active' : ''">PO Dashboard</a>
@@ -20,5 +21,3 @@
     <a href="/profile"
        th:classappend="${current.startsWith('/profile')} ? 'is-active' : ''">My Profile</a>
 </div>
-</body>
-</html>
