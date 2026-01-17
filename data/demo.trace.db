@@ -402,3 +402,36 @@ ALTER TABLE NOTIFICATION ADD CONSTRAINT NOTIFICATION_TYPE_CHECK CHECK (type IS N
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1306)
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1295)
 	at com.example.demo.DemoApplication.main(DemoApplication.java:12)
+2026-01-17 15:31:50 jdbc[7]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Das Objekt wurde bereits geschlossen
+The object is already closed [90007-214]
+2026-01-17 15:31:50 jdbc[7]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Das Objekt wurde bereits geschlossen
+The object is already closed [90007-214]
+2026-01-17 15:31:50 jdbc[7]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Das Objekt wurde bereits geschlossen
+The object is already closed [90007-214]
+2026-01-17 15:31:56 jdbc[7]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Das Objekt wurde bereits geschlossen
+The object is already closed [90007-214]
+2026-01-17 15:31:56 jdbc[7]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Das Objekt wurde bereits geschlossen
+The object is already closed [90007-214]
+2026-01-17 15:31:56 jdbc[7]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Das Objekt wurde bereits geschlossen
+The object is already closed [90007-214]
+2026-01-17 15:32:37 jdbc[10]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Das Objekt wurde bereits geschlossen
+The object is already closed [90007-214]
+2026-01-17 15:32:37 jdbc[10]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Das Objekt wurde bereits geschlossen
+The object is already closed [90007-214]
+2026-01-17 15:32:37 jdbc[10]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Das Objekt wurde bereits geschlossen
+The object is already closed [90007-214]
+2026-01-17 15:32:42 jdbc[10]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Das Objekt wurde bereits geschlossen
+The object is already closed [90007-214]
+2026-01-17 15:32:42 jdbc[10]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: Das Objekt wurde bereits geschlossen
+The object is already closed [90007-214]
